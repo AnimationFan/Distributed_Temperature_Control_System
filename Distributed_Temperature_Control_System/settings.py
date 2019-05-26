@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     '温控系统.apps.温控系统Config',
+    'AirCManager',
+    'Customer',
+    'Front',
+    'HotelManager'
 ]
 
 MIDDLEWARE = [
