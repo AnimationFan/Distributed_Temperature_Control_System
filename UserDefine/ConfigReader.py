@@ -24,6 +24,8 @@ class DefaultConfig:
         self.TempChangeInHigh = 0;
         self.TempChangeInMiddle = 0;
         self.TempChangeInLow = 0;
+        #设定处理者数量
+        self.ProducerNum=0;
 
 
 class ConfigReader(xml.sax.ContentHandler):
@@ -75,6 +77,9 @@ class ConfigReader(xml.sax.ContentHandler):
             if attributes['modle'] == 'LowWind':
                 #print("低风速变化速度", attributes['speed'])
                 self.configInfo.TempChangeInLow=attributes['speed']
+        if tag=="Producer":
+            self.configInfo.ProducerNum=attributes["num"]
+
 
     #元素结束事件处理
     def endElement(self,tag):
