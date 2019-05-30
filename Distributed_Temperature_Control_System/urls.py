@@ -18,10 +18,10 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('Front/',include('Front.urls')),
-    path('Customer/',include('Customer.urls')),
-    path('HotelManager/',include('HotelManager.urls')),
-    path('AirCManager/',include('AirCManager.urls')),
+   # path('Front/',include('Front.urls')),
+   # path('Customer/',include('Customer.urls')),
+   # path('HotelManager/',include('HotelManager.urls')),
+   # path('AirCManager/',include('AirCManager.urls')),
    #公共用户操作
    path('user/',include('温控系统.urls')),
 
