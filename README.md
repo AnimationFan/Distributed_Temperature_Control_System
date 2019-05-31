@@ -74,6 +74,5 @@ def turnOnAirC(self,userId:str,roomNum:str)://启动空调
 //返回值类型为bool
 def turnOffAirC(self,userId:str,roomNum:str)://关闭空调
 //返回值类型为bool
-
-
 默认参数的导入使用UserDefine目录下的ConfigReader.py中的config_info，具体内容自行查看
+  
