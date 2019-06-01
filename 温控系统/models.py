@@ -14,7 +14,7 @@ class User(models.Model):
 class AirC(models.Model):
     room_num=models.CharField(max_length=10,blank=False)
 
-
+#datetimefield存储的是一个datetime.datetime 对象
 class UseRecord(models.Model):
     WIND_SIZE=(
         ('L','Low'),
