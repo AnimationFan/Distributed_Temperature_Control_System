@@ -11,8 +11,14 @@ class User(models.Model):
     password=models.CharField(max_length=30,blank=False)
     user_type=models.CharField(max_length=3,choices=USER_TYPE,blank=False)
 
+
 class AirC(models.Model):
     room_num=models.CharField(max_length=10,blank=False)
+
+
+class UserRoom(models.Model):
+    user_name=models.OneToOneField(User,on_delete=models.CASCADE,blank=False)
+    room=models.OneToOneField(AirC,on_delete=models.CASCADE,blank=False)
 
 #datetimefield存储的是一个datetime.datetime 对象
 class UseRecord(models.Model):
