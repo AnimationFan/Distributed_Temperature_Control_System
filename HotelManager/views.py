@@ -8,12 +8,15 @@ from UserDefine.ConfigReader import config_info,DefaultConfig
 
 Default=DefaultConfig()
 
-controller=Controller()
-
 class Manager:
 
     def welcome(self,request):
-      return render_to_response('Mawelcome.html')
+      list = []
+      getlist = controller.getStates()
+      for var in getlist:
+        a = {"customer": var.user_name, "room": var.room}
+        list.append(a)
+      return render_to_response('Mawelcome.html',{"list":list})
 
     #设置计费参数
     def setCharge(self,request):
@@ -107,7 +110,7 @@ class Manager:
        schedulingtimes=preid.schedulingtimes
 
        #总记录数
-       notessum=len(list)
+       notesnum=len(list)
 
        #总开销
        totalcost = 0.0

@@ -9,17 +9,15 @@ from UserDefine.ConfigReader import config_info,DefaultConfig
 
 Default=DefaultConfig()
 
-controller=Controller()
-
 class Customer:
     id=''
     room=''
 
     def welcome(self,request):
       self.id = request.GET['id']
-      self.room = request.GET['room']
       pre = models.UserRoom.object.get(User_name=self.id)
       preroom=pre.room.room_num
+      self.room=preroom
       return render_to_response('welcome.html',{'room':preroom})
 
     #开启空调
@@ -35,7 +33,7 @@ class Customer:
       t = request.GET['temp']
       t = int(t)
       w=lastone['Temp']
-      controller.setAirCState(t,w)
+      controller.setAirCState(self.room,t,w,self.id)
       return render_to_response('Customer.html')
 
     #设置风速
@@ -45,7 +43,7 @@ class Customer:
       w = request.GET['wind']
       w = int(w)
       t=lastone['Temp']
-      controller.setAirCState(t,w)
+      controller.setAirCState(self.room,t,w,self.id)
       return render_to_response('Customer.html')
 
 
