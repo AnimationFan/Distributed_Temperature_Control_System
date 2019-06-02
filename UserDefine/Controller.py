@@ -5,7 +5,6 @@ import datetime
 import threading
 import time
 
-
 #任务类
 class Task:
     def __init__(self,roomNum:str,temp:int,wind,userId:str):
@@ -13,15 +12,15 @@ class Task:
         self.targetTemp=temp
         self.targetWind=wind
         self.userId=userId
-        self.beginTime=None
+        self.beginTime=None#记录任务的等待时间
         self.timer=None
+        self.taskList=None
 
-    def timerWork(self,taskList):
-        producer=taskList.getProducer()
-        producer.releaseTask()
+    def timerWork(self):
+        print("计时器倒计时结束")
+        producer=self.taskList.getProducer()
         producer.setTask(self)
-
-
+        producer.taskList.taskList.remove(self)
 
 #任务队列，实质是任务的控制分配系统系统
 class TaskList:
@@ -37,8 +36,19 @@ class TaskList:
         self.producer_semaphore.release()
 
     def addTask(self,task:Task):
-        vacant_producer=None
+        #检测目标空调是否已经有服务对象
+        #目标空调有服务对象时
         self.producer_semaphore.acquire()
+        for producer in self.producerList:
+            if producer.task!=None:
+                if producer.task.targetRoom==task.targetRoom:
+                    producer.control_airc.setTask(task)
+                    self.producer_semaphore.release()
+                    return
+        self.producer_semaphore.release()
+        #目标空调没有服务对象时
+        self.producer_semaphore.acquire()
+        vacant_producer=None
         for producer in self.producerList:
             if producer.task==None:
                 vacant_producer=producer
@@ -71,12 +81,13 @@ class TaskList:
                             continue
                         elif producer.task.targetWind == best_producer.task.targetWind and producer.task.beginTime < best_producer.task.beginTime:
                            best_producer = producer
-                    best_producer.releasTask()
                     best_producer.setTask(task)
             #没有风速小于，存在风速等于请求
             if lowwer.__len__()==0 and equal.__len__()>0:
-                self.append(task)
-                task.timer=threading.Timer(120,task.timerWork)
+                task.taskList=self
+                task.timer=threading.Timer(20,task.timerWork)
+                task.timer.start()
+                self.appendTask(task)
             #所有风速都大于请求
             if lowwer.__len__()==0 and equal.__len__()==0:
                 self.appendTask(task)
@@ -97,7 +108,7 @@ class TaskList:
         return best_task
 
     #AppendTask 主要用于风机释放之前的任务
-    def appendTask(self,task:Task):
+    def appendTask(self,task):
         self.task_semaphore.acquire()
         self.taskList.append(task)
         self.task_semaphore.release()
@@ -112,50 +123,60 @@ class TaskList:
 
 #任务处理类，负责处理任务
 class Producer():
-    def __init__(self,taskList:TaskList,aircs:list):
+    def __init__(self,taskList:TaskList,aircs:list,id):
         self.control_airc=None
-        self.Task=None
+        self.task=None
         self.aircs=aircs
         self.taskList=taskList
+        self.id=id
 
     def setTask(self,task:Task):
         if task==None:
             return
         else:
+            #先释放原来的任务
+            self.releaseTask()
             for airc in self.aircs:
-                if airc.room_num==task.targetRoom and airc.user==task.userId:
+                if airc.roomNum==task.targetRoom and (airc.user==task.userId or airc.user==None):
                     self.task=task
                     self.task.beginTime=datetime.datetime.now()
                     self.control_airc=airc
                     self.control_airc.setProducer(self)
                     self.control_airc.setTask(task)
+                    break
+
 
     def removeTask(self):#任务完成直接移除当前的任务
         self.control_airc=None
         wind=0
-        if self.Task != None:
+        if self.task != None:
             wind=self.task.targetWind
-            self.Task=None
+            self.task=None
         #从taskList获取任务
         task=self.taskList.getTask(wind)
         self.setTask(task)
 
     def releaseTask(self):#释放当前正在执行的任务
-        self.control_airc=None
-        if self.Task!=None:
-            self.appendTask(self.task)
-            self.task=None
-            self.control_airc=None
+        #先修改当前空调的状态
+        if self.task!=None:
+            self.taskList.appendTask(self.task)
+            self.control_airc.saveRecord()
+            self.control_airc.on=False
+            self.control_airc.wind=0
+            self.control_airc.Producer=None
+            self.control_airc.user=None
+
 
 
 #状态记录类，实际已经相当于空调的实例了
 class AirCState(threading.Thread):
     #空调状态类
     def __init__(self,roomNum:str,config:DefaultConfig):
+        threading.Thread.__init__(self)
         self.on=False
         self.roomNum=roomNum
         self.wind=0
-        self.user=''
+        self.user=None
         self.begintime=None
         self.defaultconfig=config
         self.temp = self.defaultconfig.DefaultTemp
@@ -167,10 +188,9 @@ class AirCState(threading.Thread):
     def turnOff(self,userId):
         #结束当前的任务，结束计费段
         self.saveRecord()
-        self.begintime=None
         self.on=False
         self.wind=0
-        self.user=''
+        self.user=None
         #出让服务对象
         self.producer.removeTask()
         return True
@@ -193,25 +213,36 @@ class AirCState(threading.Thread):
         #保存
         endtime=datetime.datetime.now()
         record=UseRecord(begin_time=self.begintime,
-                         end_time=endtime,
-                         user_name=self.user,
-                         room_num=self.roomNum,
-                         wind=self.wind,
-                         temp=self.targetTemp,
-                         price=self.getPrice()
-                         )
+                          end_time=endtime,
+                          user_name=self.user,
+                          room_num=self.roomNum,
+                          wind=self.wind,
+                          temp=self.targetTemp,
+                          price=self.getPrice()
+                          )
+        print(self.begintime,endtime,self.user,self.roomNum,self.wind,self.targetTemp,self.getPrice())
         self.begintime=None
 
+    def setProducer(self,producer:Producer):
+        #先释放原有的producer
+        if self.producer==None:
+            self.producer=producer
+        else:
+            self.producer.removeTask()
+            self.producer=producer
 
     def setTask(self,task:Task):
         self.semaphore.acquire()
-        self.on=True
+        if self.on!=False:
+            self.saveRecord()
+        else:
+            self.on=True
         self.wind=task.targetWind
         self.targetTemp=task.targetTemp
         self.user=task.userId
         self.begintime=datetime.datetime.now()
         self.semaphore.release()
-        pass
+
 
     #run函数，根据设置，调整空调的温度，
     def run(self):
@@ -233,7 +264,7 @@ class AirCState(threading.Thread):
                             self.temp = self.defaultconfig.DefaultTemp
                     self.semaphore.release()
             if self.on == True and self.wind >= 1:
-                TempChange = [self.defaultconfig.TempChangeInLow, self.defaultconfig.TimeInMiddle,
+                TempChange = [self.defaultconfig.TempChangeInLow, self.defaultconfig.TempChangeInMiddle,
                               self.defaultconfig.TempChangeInHigh]
                 self.semaphore.acquire()
                 if self.defaultconfig.DefaultModle == "Cold":
@@ -241,10 +272,8 @@ class AirCState(threading.Thread):
                 if self.defaultconfig.DefaultModle == "Hot":
                     self.temp = self.temp + TempChange[self.wind - 1]
                 self.semaphore.release()
-            time.sleep(60)
 
-    def setProduer(self, producer:Producer):
-        self.producer=producer
+            time.sleep(5)
 
 
 #控制类，提供同一的任务管理方法，处理任务的调度
@@ -256,18 +285,17 @@ class Controller(object):
             cls.__instance=object.__new__(cls)
         return cls.__instance
 
-    def __init__(self):
+    def __init__(self,config_info:DefaultConfig,airCs:list):
         self.config_info=config_info#初始化状态信息
         self.aircList=[]#初始化空调信息队列,并启动
-        airCs=AirC.objects.all()
         for airc in airCs:
-            real_air=AirCState(airc.room_num)
+            real_air=AirCState(airc,self.config_info)
             real_air.start()
             self.aircList.append(real_air)
         self.taskList = TaskList()
         i=0
         while i<self.config_info.ProducerNum:
-            self.taskList.appendProducer(Producer(self.taskList,self.aircList))
+            self.taskList.appendProducer(Producer(self.taskList,self.aircList,i))
             i=i+1
 
 
@@ -301,8 +329,11 @@ class Controller(object):
 
 
     def setAirCState(self,roomNum:str,temp:int,wind:int,userId:str):
-        self.taskList.addTask(Task(roomNum,temp,wind,userId))
-        return True
+        if wind>3 or wind<0:
+            return False
+        else:
+            self.taskList.addTask(Task(roomNum,temp,wind,userId))
+            return True
 
     def turnOnAirC(self,userId:str,roomNum:str):
         self.taskList.addTask(Task(roomNum,self.config_info.DefaultTemp,1,userId))
@@ -311,8 +342,11 @@ class Controller(object):
     def turnOffAirC(self, userId: str, roomNum: str):
         for airc in self.aircList:
             if airc.roomNum ==roomNum and airc.user==userId:
-                airc.turnOff()
+                airc.turnOff(userId)
                 return True
         return False
 
-controller=Controller()
+airclist=[]
+for airc in AirC.objects.all():
+    airclist.append(airc.room_num)
+controller=Controller(config_info,airclist)
