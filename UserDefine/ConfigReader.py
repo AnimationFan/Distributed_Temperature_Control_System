@@ -24,64 +24,68 @@ class DefaultConfig:
         self.TempChangeInHigh = 0;
         self.TempChangeInMiddle = 0;
         self.TempChangeInLow = 0;
+        #设定处理者数量
+        self.ProducerNum=0;
 
 
 class ConfigReader(xml.sax.ContentHandler):
-    def __init__(self, defaultconfig:DefaultConfig):
-        self.configInfo=defaultconfig
+    def __init__(self, defaultconfig: DefaultConfig):
+        self.configInfo = defaultconfig
 
-    #元素开始事件处理
-    def startElement(self,tag,attributes):
-        #数据操作
-        if tag=="ini":
-            #print("读取开始")
+    # 元素开始事件处理
+    def startElement(self, tag, attributes):
+        # 数据操作
+        if tag == "ini":
+            # print("读取开始")
             pass
-        if tag=="TempRange":
-            if attributes['modle']=='Hot':
-                #print("制热模式")
-                #print("最高温度",attributes['max'])
-                self.configInfo.HotMaxTemp=attributes['max']
-                #print("最低温度",attributes['min'])
-                self.configInfo.HotMinTemp = attributes['min']
-            if attributes['modle']=='Cold':
-                #print("制冷模式")
-                #print("最高温度",attributes['max'])
-                self.configInfo.ColdMaxTemp = attributes['max']
-                #print("最低温度",attributes['min'])
-                self.configInfo.ColdMinTemp = attributes['min']
-        if tag=="DefaultTemp":
-            self.configInfo.DefaultTemp=attributes['value']
-            self.configInfo.DefaultModle=attributes['modle']
-        if tag=="Price":
-            #print("默认价格",attributes['value'])
-            self.configInfo.Price=attributes['value']
-        if tag=="UseTime":
-            if attributes['modle']=='HighWind':
-                #print("高风速使用时间",attributes['time'])
-                self.configInfo.TimeInHigh=attributes['time']
-            if attributes['modle'] == 'MiddleWind':
-                #print("中风速使用时间", attributes['time'])
-                self.configInfo.TimeInMiddle = attributes['time']
-            if attributes['modle'] == 'LowWind':
-                #print("低风速使用时间", attributes['time'])
-                self.configInfo.TimeInLow = attributes['time']
-        if tag=="ChangeSpeed":
+        if tag == "TempRange":
+            if attributes['modle'] == 'Hot':
+                # print("制热模式")
+                # print("最高温度",attributes['max'])
+                self.configInfo.HotMaxTemp = int(attributes['max'])
+                # print("最低温度",attributes['min'])
+                self.configInfo.HotMinTemp = int(attributes['min'])
+            if attributes['modle'] == 'Cold':
+                # print("制冷模式")
+                # print("最高温度",attributes['max'])
+                self.configInfo.ColdMaxTemp = int(attributes['max'])
+                # print("最低温度",attributes['min'])
+                self.configInfo.ColdMinTemp = int(attributes['min'])
+        if tag == "DefaultTemp":
+            self.configInfo.DefaultTemp = float(attributes['value'])
+            self.configInfo.DefaultModle = attributes['modle']
+        if tag == "Price":
+            # print("默认价格",attributes['value'])
+            self.configInfo.Price = float(attributes['value'])
+        if tag == "UseTime":
             if attributes['modle'] == 'HighWind':
-                #print("高风速变化速度", attributes['speed'])
-                self.configInfo.TempChangeInHigh=attributes['speed']
+                # print("高风速使用时间",attributes['time'])
+                self.configInfo.TimeInHigh = int(attributes['time'])
             if attributes['modle'] == 'MiddleWind':
-                #print("中风速变化速度", attributes['speed'])
-                self.configInfo.TempChangeInMiddle=attributes['speed']
+                # print("中风速使用时间", attributes['time'])
+                self.configInfo.TimeInMiddle = int(attributes['time'])
             if attributes['modle'] == 'LowWind':
-                #print("低风速变化速度", attributes['speed'])
-                self.configInfo.TempChangeInLow=attributes['speed']
+                # print("低风速使用时间", attributes['time'])
+                self.configInfo.TimeInLow = int(attributes['time'])
+        if tag == "ChangeSpeed":
+            if attributes['modle'] == 'HighWind':
+                # print("高风速变化速度", attributes['speed'])
+                self.configInfo.TempChangeInHigh = float(attributes['speed'])
+            if attributes['modle'] == 'MiddleWind':
+                # print("中风速变化速度", attributes['speed'])
+                self.configInfo.TempChangeInMiddle = float(attributes['speed'])
+            if attributes['modle'] == 'LowWind':
+                # print("低风速变化速度", attributes['speed'])
+                self.configInfo.TempChangeInLow = float(attributes['speed'])
+        if tag=="Producer":
+            self.configInfo.ProducerNum=int(attributes["num"])
 
-    #元素结束事件处理
-    def endElement(self,tag):
+    # 元素结束事件处理
+    def endElement(self, tag):
         pass
 
-    #内容事件处理
-    def charsets(self,content):
+    # 内容事件处理
+    def charsets(self, content):
         pass
 
 
