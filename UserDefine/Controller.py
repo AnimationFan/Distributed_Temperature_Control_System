@@ -347,7 +347,7 @@ class Controller(object):
 
     def addAirC(self,roomNum):
         airc=AirC.objects.filter(room_num=roomNum)
-        if airc==None:
+        if airc.__len__()>0:
             return False
         else:
             airc=AirC(room_num=roomNum)
@@ -355,6 +355,7 @@ class Controller(object):
             real_air=AirCState(roomNum,self.config_info)
             real_air.start()
             self.aircList.append(real_air)
+            return True
 
 
     def delAirC(self,rooNum):
@@ -363,7 +364,7 @@ class Controller(object):
             if airc.roomNum==rooNum:
                 target_airc=airc.roomNum
         if target_airc:
-            self.turnOffAirC(userId="")
+            self.turnOffAirC(roomNum=rooNum,userId="")
             target_airc=None
             target_airc=AirC.objects.get(room_num=rooNum)
             if target_airc:
