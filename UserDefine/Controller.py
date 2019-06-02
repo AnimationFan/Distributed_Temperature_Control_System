@@ -5,6 +5,7 @@ import datetime
 import threading
 import time
 
+
 #任务类
 class Task:
     def __init__(self,roomNum:str,temp:int,wind,userId:str):
