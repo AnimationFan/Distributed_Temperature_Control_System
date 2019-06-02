@@ -150,7 +150,7 @@ class Controller(object):
 
 
     #控制类函数->立即返回，延迟操作
-    def setDefaultConfig(self,temp:int ,wind: int ,charge: float):
+    def setDefaultConfig(self,temp:int ,charge: float):
         pass
 
     def setAirCState(self, roomNum: str, temp: int, wind: int, userId: str):

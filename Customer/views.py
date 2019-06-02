@@ -18,7 +18,7 @@ class Customer:
     def welcome(self,request):
       self.id = request.GET['id']
       self.room = request.GET['room']
-      pre = models.UserRoom.Object.get(User_name=self.id)
+      pre = models.UserRoom.object.get(User_name=self.id)
       preroom=pre.room.room_num
       return render_to_response('welcome.html',{'room':preroom})
 
@@ -29,7 +29,7 @@ class Customer:
       return render_to_response('Customer.html')
 
     #设置温度
-    def settemp(self,request):
+    def setTemp(self,request):
       global controller
       lastone = controller.getStates();
       t = request.GET['temp']
@@ -39,7 +39,7 @@ class Customer:
       return render_to_response('Customer.html')
 
     #设置风速
-    def settemp(self,request):
+    def setWind(self,request):
       global controller
       lastone = controller.getStates();
       w = request.GET['wind']
@@ -55,6 +55,7 @@ class Customer:
       totalcost=0.0
       for var in list:
         totalcost=totalcost+var.price
+      totalcost=totalcost+controller.getAccount(self.id,self.room)
       return render_to_response('Customer.html',{'cost':totalcost})
 
 
@@ -62,6 +63,7 @@ class Customer:
       global controller
       controller.turnOnAirC(self.id,self.room)
       return render_to_response('Customer.html')
+
 
 precus=Customer()
 

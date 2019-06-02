@@ -1,6 +1,5 @@
 from django.shortcuts import render_to_response
 
-
 from UserDefine.Controller import Controller,controller
 from 温控系统 import models
 from UserDefine.ConfigReader import config_info,DefaultConfig
@@ -20,14 +19,14 @@ class Manager:
     def setCharge(self,request):
         global controller
         newcharge = request.GET['charge']
-        newwind = 调用函数
+        newtemp = config_info.DefaultTemp
         controller.setDefaultConfig(newtemp, newcharge)
         return render_to_response('Manager.html')
 
     def setTemp(self,request):
         global controller
         newtemp = request.GET['temp']
-        newcharge = 调用函数
+        newcharge = config_info.Price
         controller.setDefaultConfig(newtemp, newcharge)
         return render_to_response('Manager.html')
 
