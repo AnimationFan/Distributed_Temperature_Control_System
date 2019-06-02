@@ -47,7 +47,7 @@ class Manager:
        alltem = []
        allwind = []
 
-       defaulttem=调用函数
+       defaulttem=config_info.DefaultTemp
        currenttem=defaulttem
        
        for i in range(0,length-1):
