@@ -192,7 +192,8 @@ class AirCState(threading.Thread):
         self.wind=0
         self.user=None
         #出让服务对象
-        self.producer.removeTask()
+        if self.producer:
+           self.producer.removeTask()
         return True
 
     def getPrice(self):
@@ -314,8 +315,6 @@ class Controller(object):
                 price=airc.getPrice()
         return price
 
-
-
     #控制类函数->立即返回，延迟操作
     def setDefaultConfig(self,temp:int ,charge: float):
         # 所有启动的空调结束当前的计费段
@@ -345,6 +344,32 @@ class Controller(object):
                 airc.turnOff(userId)
                 return True
         return False
+
+    def addAirC(self,roomNum):
+        airc=AirC.objects.filter(room_num=roomNum)
+        if airc==None:
+            return False
+        else:
+            airc=AirC(room_num=roomNum)
+            airc.save()
+            real_air=AirCState(roomNum,self.config_info)
+            real_air.start()
+            self.aircList.append(real_air)
+
+    def delAirC(self,rooNum):
+        target_airc=None
+        for airc in self.aircList:
+            if airc.roomNum==rooNum:
+                target_airc=airc.roomNum
+        if target_airc:
+            self.turnOffAirC(userId="")
+            target_airc=None
+            target_airc=AirC.objects.get(room_num=rooNum)
+            if target_airc:
+                target_airc.delete()
+            return True
+        else:
+            return True
 
 airclist=[]
 for airc in AirC.objects.all():
