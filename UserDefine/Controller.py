@@ -1,5 +1,5 @@
 from UserDefine.ConfigReader import config_info,DefaultConfig
-from 温控系统.models import AirC,UseRecord
+import 温控系统.models
 
 import datetime
 import threading
@@ -119,7 +119,7 @@ class TaskList:
         for producer in self.producerList:
             if best_producer==None or (best_producer!=None and producer.task.beginTime<best_producer.task.beginTime):
                 best_producer=producer
-        return producer
+        return best_producer
 
 #任务处理类，负责处理任务
 class Producer():
@@ -185,6 +185,8 @@ class AirCState(threading.Thread):
         self.producer=None
 
 
+
+
     def turnOff(self,userId):
         #结束当前的任务，结束计费段
         self.saveRecord()
@@ -210,10 +212,33 @@ class AirCState(threading.Thread):
                 price = (usetime / self.defaultconfig.TimeInHigh) * self.defaultconfig.Price
         return price
 
+    def checkReach(self):
+        bool_reach=False
+        if self.defaultconfig.DefaultModle=="Cold":
+            if self.temp<=self.targetTemp:
+                bool_reach=True
+        else:
+            if self.targetTemp>=self.targetTemp:
+                bool_reach=True
+        if bool_reach:
+            count=温控系统.models.UserRoom.objects.filter(room=self.roomNum,user_name=self.user).count()
+            if count==1:
+                target_record=温控系统.models.UserRoom.objects.get(room=self.roomNum,user_name=self.user)
+                target_record.reachtimes=target_record.reachtimes+1
+                target_record.save()
+                return True
+            else:
+                return False
+
+
+
+
+
     def saveRecord(self):
         #保存
+        self.checkReach()
         endtime=datetime.datetime.now()
-        record=UseRecord(begin_time=self.begintime,
+        record=温控系统.models.UseRecord(begin_time=self.begintime,
                           end_time=endtime,
                           user_name=self.user,
                           room_num=self.roomNum,
@@ -346,11 +371,11 @@ class Controller(object):
         return False
 
     def addAirC(self,roomNum):
-        airc=AirC.objects.filter(room_num=roomNum)
+        airc=温控系统.models.AirC.objects.filter(room_num=roomNum)
         if airc.__len__()>0:
             return False
         else:
-            airc=AirC(room_num=roomNum)
+            airc=温控系统.models.AirC(room_num=roomNum)
             airc.save()
             real_air=AirCState(roomNum,self.config_info)
             real_air.start()
@@ -358,22 +383,23 @@ class Controller(object):
             return True
 
 
-    def delAirC(self,rooNum):
+    def delAirC(self,roomNum):
         target_airc=None
         for airc in self.aircList:
-            if airc.roomNum==rooNum:
+            if airc.roomNum==roomNum:
                 target_airc=airc.roomNum
         if target_airc:
-            self.turnOffAirC(roomNum=rooNum,userId="")
+            self.turnOffAirC(roomNum=roomNum,userId="")
             target_airc=None
-            target_airc=AirC.objects.get(room_num=rooNum)
+            if 温控系统.models.AirC.objects.filter(room_num=roomNum).count() ==1:
+                target_airc=温控系统.models.AirC.objects.get(room_num=roomNum)
             if target_airc:
                 target_airc.delete()
             return True
         else:
-            return True
+            return False
 
 airclist=[]
-for airc in AirC.objects.all():
+for airc in 温控系统.models.AirC.objects.all():
     airclist.append(airc.room_num)
 controller=Controller(config_info,airclist)

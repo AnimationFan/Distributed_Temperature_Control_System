@@ -19,6 +19,8 @@ class AirC(models.Model):
 class UserRoom(models.Model):
     user_name=models.OneToOneField(User,on_delete=models.CASCADE,blank=False)
     room=models.OneToOneField(AirC,on_delete=models.CASCADE,blank=False)
+    schedulingtimes = models.IntegerField(blank=False,default=0)
+    reachtimes=models.IntegerField(blank=False,default=0)
 
 #datetimefield存储的是一个datetime.datetime 对象
 class UseRecord(models.Model):
