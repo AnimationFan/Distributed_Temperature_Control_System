@@ -1,5 +1,7 @@
 from django.shortcuts import render_to_response
 
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from UserDefine.Controller import Controller,controller
 from 温控系统 import models
 from UserDefine.ConfigReader import config_info,DefaultConfig
@@ -10,6 +12,10 @@ Default=DefaultConfig()
 
 class Manager:
 
+    def __init__(self):
+        pass
+
+    @login_required
     def welcome(self,request):
       list = []
       getlist = controller.getStates()
@@ -18,22 +24,28 @@ class Manager:
         list.append(a)
       return render_to_response('Mawelcome.html',{"list":list})
 
+
     #设置计费参数
+    @login_required
     def setCharge(self,request):
         global controller
         newcharge = request.GET['charge']
         newtemp = config_info.DefaultTemp
         controller.setDefaultConfig(newtemp, newcharge)
-        return render_to_response('Manager.html')
+        HttpResponseRedirect("/Manager/")
 
+
+    @login_required
     def setTemp(self,request):
         global controller
         newtemp = request.GET['temp']
         newcharge = config_info.Price
         controller.setDefaultConfig(newtemp, newcharge)
-        return render_to_response('Manager.html')
+        HttpResponseRedirect("/Manager/")
+
 
     #开启空调
+    @login_required
     def getReport(self,request):
        global controller
        customer = request.GET['customerID']
@@ -70,17 +82,20 @@ class Manager:
                      currenttem = currenttem - timedepart / 5
 
          #记录到达目标温度次数
-         temdepart = abs(list[i].temp-currenttem)
-         reachtime = temdepart*5
-         timedepart = (list[i].begin_time - list[i].end_time).total_seconds()/60
-         if (timedepart>reachtime):
-             reachtemtimes=reachtemtimes+1
-             currenttem=list[i].temp
-         else:
-             if list[i].temp>currenttem:
-                 currenttem=currenttem+timedepart/5
-             else:
-                 currenttem=currenttem-timedepart/5
+         pre=models.UserRoom.objects.get(user_name=customer)
+         reachtemtimes=pre.reachtimes
+         #temdepart = abs(list[i].temp-currenttem)
+         #reachtime = temdepart*5
+         #timedepart = (list[i].begin_time - list[i].end_time).total_seconds()/60
+         #if (timedepart>reachtime):
+             #reachtemtimes=reachtemtimes+1
+             #currenttem=list[i].temp
+         #else:
+             #if list[i].temp>currenttem:
+                #currenttem=currenttem+timedepart/5
+             #else:
+                 #currenttem=currenttem-timedepart/5
+
 
          #记录全部风速、温度
          alltem.append(list[i].temp)
@@ -118,6 +133,6 @@ class Manager:
            totalcost = totalcost + var.price
        totalcost = totalcost + controller.getAccount(customer, room)
 
-       return render_to_response('Manager.html',{'runningtimes': runningtimes,"targettem":targettem,'targetwind':targetwind,"schedulingtimes":schedulingtimes,"reachtemtimes":reachtemtimes,"notesnum":notesnum,"totalcost":totalcost})
+       return render_to_response('Report.html',{'runningtimes': runningtimes,"targettem":targettem,'targetwind':targetwind,"schedulingtimes":schedulingtimes,"reachtemtimes":reachtemtimes,"notesnum":notesnum,"totalcost":totalcost})
 
 preMa=Manager()
