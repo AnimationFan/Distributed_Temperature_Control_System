@@ -19,12 +19,12 @@ preMa=Manager()
 
 @login_required
 def welcome(request):
-    list = []
+    getlist = []
     getlist = controller.getStates()
     for var in getlist:
       a = {"customer": var.user_name, "room": var.room}
-      list.append(a)
-    return render_to_response('Mawelcome.html',{"list":list})
+      getlist.append(a)
+    return render_to_response('Mawelcome.html',{"list":getlist})
 
 
     #设置计费参数
@@ -52,8 +52,8 @@ def getReport(request):
     customer = request.GET['customerID']
     room = request.GET['roomID']
 
-    list = models.UseRecord.objects.filter(room_num=room,user_name=customer)
-    length=len(list)
+    getlist = models.UseRecord.objects.filter(room_num=room,user_name=customer)
+    length=len(getlist)
 
     runningtimes=0
     targettem = 0
@@ -73,11 +73,11 @@ def getReport(request):
     for i in range(0,length-1):
 
          # 记录运行次数
-      if (list[i].end_time!=list[i+1].begin_time):
+      if (getlist[i].end_time!=getlist[i+1].begin_time):
            runningtimes+1
            temdepart = abs(defaulttem - currenttem)
            reachtime = temdepart * 5
-           timedepart = (list[i+1].begin_time - list[i].end_time).total_seconds()/60
+           timedepart = (getlist[i+1].begin_time - getlist[i].end_time).total_seconds()/60
            if (timedepart > reachtime):
              currenttem = defaulttem
            else:
@@ -87,22 +87,22 @@ def getReport(request):
                    currenttem = currenttem - timedepart / 5
 
          #记录到达目标温度次数
-     #temdepart = abs(list[i].temp-currenttem)
+     #temdepart = abs(getlist[i].temp-currenttem)
          #reachtime = temdepart*5
-         #timedepart = (list[i].begin_time - list[i].end_time).total_seconds()/60
+         #timedepart = (getlist[i].begin_time - getlist[i].end_time).total_seconds()/60
          #if (timedepart>reachtime):
              #reachtemtimes=reachtemtimes+1
-             #currenttem=list[i].temp
+             #currenttem=getlist[i].temp
          #else:
-             #if list[i].temp>currenttem:
+             #if getlist[i].temp>currenttem:
                 #currenttem=currenttem+timedepart/5
              #else:
                  #currenttem=currenttem-timedepart/5
 
 
       #记录全部风速、温度
-      alltem.append(list[i].temp)
-      allwind.append(list[i].wind)
+      alltem.append(getlist[i].temp)
+      allwind.append(getlist[i].wind)
 
        # 记录最大的次数的温度
     d = {}
@@ -128,11 +128,11 @@ def getReport(request):
     schedulingtimes=preid.schedulingtimes
 
        #总记录数
-    notesnum=len(list)
+    notesnum=len(getlist)
 
        #总开销
     totalcost = 0.0
-    for var in list:
+    for var in getlist:
       totalcost = totalcost + var.price
     totalcost = totalcost + controller.getAccount(customer, room)
 

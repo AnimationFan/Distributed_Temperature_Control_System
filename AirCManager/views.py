@@ -32,29 +32,29 @@ def welcome(request):
     else:
         result2='error'
         prema.p2=0
-    list=[]
+    givelist=[]
     getlist = controller.getStates()
     for var in getlist:
       a={"customer":var.user_name,"room":var.room,"on":"关"}
       if var["On"]==True:
         a["on"]="开"
-      list.append(a)
-    return render_to_response('welcome.html',{'list':list,'result1':result1,'result2':result2})
+      givelist.append(a)
+    return render_to_response('welcome.html',{'list':givelist,'result1':result1,'result2':result2})
 
     #开启中央空调
 @login_required
 def TurnOn(request):
     global controller,prema
-    list=models.UserRoom.objects.all()
-    for var in list:
+    getlist=models.UserRoom.objects.all()
+    for var in getlist:
         controller.turnOnAirC(var.user_name,var.room)
     return HttpResponseRedirect("/AirCManager/")
 
 @login_required
 def turnOff(request):
     global controller,prema
-    list=models.UserRoom.objects.all()
-    for var in list:
+    getlist=models.UserRoom.objects.all()
+    for var in getlist:
         controller.turnOffAirC(var.user_name,var.room)
     return HttpResponseRedirect("/AirCManager/")
 

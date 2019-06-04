@@ -31,7 +31,7 @@ def welcome(request):
     preroom=pre.room.room_num
     precus.room=preroom
     temp=precus.targettem
-    return render_to_response('welcome.html',{'room':preroom,'temp':temp})
+    #return render_to_response('welcome.html',{'room':preroom,'temp':temp})
 
     #开启空调
 @login_required
@@ -70,9 +70,9 @@ def setWind(request):
 @login_required
 def getAccount(request):
     global controller
-    list=models.UseRecord.objects.filter(room_num=precus.room)
+    getlist=models.UseRecord.objects.filter(room_num=precus.room)
     totalcost=0.0
-    for var in list:
+    for var in getlist:
       totalcost=totalcost+var.price
     totalcost=totalcost+controller.getAccount(precus.id,precus.room)
     return render_to_response('Customer.html',{'cost':totalcost})
