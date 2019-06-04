@@ -74,7 +74,7 @@ def getAccount(request):
     for var in getlist:
       totalcost=totalcost+var.price
     totalcost=totalcost+controller.getAccount(precus.room,precus.id)
-    return render_to_response('Customer.html',{'cost':totalcost})
+    return render_to_response('Account.html',{'cost':totalcost})
 
 @login_required
 def turnOff(request):
