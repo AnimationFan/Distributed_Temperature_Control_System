@@ -15,76 +15,79 @@ class Manager:
     def __init__(self):
         pass
 
-    @login_required
-    def welcome(self,request):
-      list = []
-      getlist = controller.getStates()
-      for var in getlist:
-        a = {"customer": var.user_name, "room": var.room}
-        list.append(a)
-      return render_to_response('Mawelcome.html',{"list":list})
+preMa=Manager()
+
+@login_required
+def welcome(request):
+    list = []
+    getlist = controller.getStates()
+    for var in getlist:
+      a = {"customer": var.user_name, "room": var.room}
+      list.append(a)
+    return render_to_response('Mawelcome.html',{"list":list})
 
 
     #设置计费参数
-    @login_required
-    def setCharge(self,request):
-        global controller
-        newcharge = request.GET['charge']
-        newtemp = config_info.DefaultTemp
-        controller.setDefaultConfig(newtemp, newcharge)
-        HttpResponseRedirect("/Manager/")
+@login_required
+def setCharge(request):
+    global controller,prema
+    newcharge = request.GET['charge']
+    newtemp = config_info.DefaultTemp
+    controller.setDefaultConfig(newtemp, newcharge)
+    HttpResponseRedirect("/Manager/")
 
-
-    @login_required
-    def setTemp(self,request):
-        global controller
-        newtemp = request.GET['temp']
-        newcharge = config_info.Price
-        controller.setDefaultConfig(newtemp, newcharge)
-        HttpResponseRedirect("/Manager/")
+@login_required
+def setTemp(request):
+    global controller,prema
+    newtemp = request.GET['temp']
+    newcharge = config_info.Price
+    controller.setDefaultConfig(newtemp, newcharge)
+    HttpResponseRedirect("/Manager/")
 
 
     #开启空调
-    @login_required
-    def getReport(self,request):
-       global controller
-       customer = request.GET['customerID']
-       room = request.GET['roomID']
+@login_required
+def getReport(request):
+    global controller,prema
+    customer = request.GET['customerID']
+    room = request.GET['roomID']
 
-       list = models.UseRecord.objects.filter(room_num=room,user_name=customer)
-       length=len(list)
+    list = models.UseRecord.objects.filter(room_num=room,user_name=customer)
+    length=len(list)
 
-       runningtimes=0
-       targettem = 0
-       targetwind = 0
-       reachtemtimes=0
+    runningtimes=0
+    targettem = 0
+    targetwind = 0
+    reachtemtimes=0
 
-       alltem = []
-       allwind = []
+    alltem = []
+    allwind = []
 
-       defaulttem=config_info.DefaultTemp
-       currenttem=defaulttem
-       
-       for i in range(0,length-1):
+    defaulttem=config_info.DefaultTemp
+    currenttem=defaulttem
+
+    #到达温度次数
+    pre = models.UserRoom.objects.get(user_name=customer)
+    reachtemtimes = pre.reachtimes
+
+    for i in range(0,length-1):
 
          # 记录运行次数
-         if (list[i].end_time!=list[i+1].begin_time):
-             runningtimes+1
-             temdepart = abs(defaulttem - currenttem)
-             reachtime = temdepart * 5
-             timedepart = (list[i+1].begin_time - list[i].end_time).total_seconds()/60
-             if (timedepart > reachtime):
-                 currenttem = defaulttem
-             else:
-                 if defaulttem > currenttem:
-                     currenttem = currenttem + timedepart / 5
-                 else:
-                     currenttem = currenttem - timedepart / 5
+      if (list[i].end_time!=list[i+1].begin_time):
+           runningtimes+1
+           temdepart = abs(defaulttem - currenttem)
+           reachtime = temdepart * 5
+           timedepart = (list[i+1].begin_time - list[i].end_time).total_seconds()/60
+           if (timedepart > reachtime):
+             currenttem = defaulttem
+           else:
+               if defaulttem > currenttem:
+                   currenttem = currenttem + timedepart / 5
+               else:
+                   currenttem = currenttem - timedepart / 5
 
          #记录到达目标温度次数
-         pre=models.UserRoom.objects.get(user_name=customer)
-         reachtemtimes=pre.reachtimes
-         #temdepart = abs(list[i].temp-currenttem)
+     #temdepart = abs(list[i].temp-currenttem)
          #reachtime = temdepart*5
          #timedepart = (list[i].begin_time - list[i].end_time).total_seconds()/60
          #if (timedepart>reachtime):
@@ -97,42 +100,41 @@ class Manager:
                  #currenttem=currenttem-timedepart/5
 
 
-         #记录全部风速、温度
-         alltem.append(list[i].temp)
-         allwind.append(list[i].wind)
+      #记录全部风速、温度
+      alltem.append(list[i].temp)
+      allwind.append(list[i].wind)
 
        # 记录最大的次数的温度
-       d = {}
-       for i in alltem:
-         if i not in d:
-            count = alltem.count(i)
-            d[i] = count
-         if count > d.get(targettem, 0):
-            targettem = i
+    d = {}
+    for i in alltem:
+      if i not in d:
+        count = alltem.count(i)
+        d[i] = count
+      if count > d.get(targettem, 0):
+        targettem = i
 
        # 记录最大的次数的风速
-       e = {}
-       for i in allwind:
-         if i not in e:
-            count = allwind.count(i)
-            e[i] = count
-         if count > d.get(targetwind, 0):
-            targetwind = i
+    e = {}
+    for i in allwind:
+      if i not in e:
+        count = allwind.count(i)
+        e[i] = count
+      if count > d.get(targetwind, 0):
+        targetwind = i
 
        #记录调度次数
-       preid=models.UserRoom.objects.get(user_name=customer)
-       preid.schedulingtimes=preid.schedulingtimes+1
-       schedulingtimes=preid.schedulingtimes
+    preid=models.UserRoom.objects.get(user_name=customer)
+    preid.schedulingtimes=preid.schedulingtimes+1
+    schedulingtimes=preid.schedulingtimes
 
        #总记录数
-       notesnum=len(list)
+    notesnum=len(list)
 
        #总开销
-       totalcost = 0.0
-       for var in list:
-           totalcost = totalcost + var.price
-       totalcost = totalcost + controller.getAccount(customer, room)
+    totalcost = 0.0
+    for var in list:
+      totalcost = totalcost + var.price
+    totalcost = totalcost + controller.getAccount(customer, room)
 
-       return render_to_response('Report.html',{'runningtimes': runningtimes,"targettem":targettem,'targetwind':targetwind,"schedulingtimes":schedulingtimes,"reachtemtimes":reachtemtimes,"notesnum":notesnum,"totalcost":totalcost})
+    return render_to_response('Report.html',{'runningtimes': runningtimes,"targettem":targettem,'targetwind':targetwind,"schedulingtimes":schedulingtimes,"reachtemtimes":reachtemtimes,"notesnum":notesnum,"totalcost":totalcost})
 
-preMa=Manager()

@@ -9,6 +9,10 @@ def show_config(request):
     return HttpResponse('Hello')
 # Create your views here.
 
+def login(request):
+    return HttpResponse('LOGIN')
+# Create your views here.
+
 def init(request):
     users=User.objects.all()
     for user in users:
