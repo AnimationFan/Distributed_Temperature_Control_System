@@ -17,8 +17,10 @@ class Customer:
     id=''
     room=''
     targettemp=Default.DefaultTemp
+    currenttemp=Default.DefaultTemp
     targetwind=1
     user=id
+    On=False
 
     def __init__(self):
         self.targettemp=Default.DefaultTemp
@@ -35,8 +37,9 @@ def welcome(request):
     for var in last:
         if var["RoomNum"]==precus.room:
               lastone=var
-    currenttemp=lastone['Temp']
-    return render_to_response('welcome.html',{'room':preroom,'targettemp':precus.targettemp,'currenttemp':currenttemp,'targetwind':precus.targetwind})
+    precus.currenttemp=lastone['Temp']
+    precus.On=lastone['On']
+    return render_to_response('welcome.html',{'room':precus.room,'On':precus.On,'targettemp':precus.targettemp,'currenttemp':precus.currenttemp,'targetwind':precus.targetwind})
 
     #开启空调
 @login_required

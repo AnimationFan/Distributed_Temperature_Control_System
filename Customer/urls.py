@@ -8,5 +8,5 @@ urlpatterns = [
     url('setWind', views.setWind),          #风速数值(wind)（1、2、3）
     url('getAccount', views.getAccount),
     url('TurnOff', views.turnOff),
-    url('', views.welcome),                 #需要顾客号(id)   #返回房间号(room:str)、温度(temp:int)
+    url('', views.welcome),                 #需要顾客号(id)   #返回房间号(room:str)、目标温度(targettemp:int)、室温(currenttemp:int)、风速(wind:int)、开关与否(On:bool)
 ]
