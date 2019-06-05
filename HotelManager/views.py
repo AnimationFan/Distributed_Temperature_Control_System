@@ -17,24 +17,29 @@ class Manager:
 
 preMa=Manager()
 
-@login_required
+#@login_required
 def welcome(request):
-    getlist = []
     getlist = controller.getStates()
+    showlist=[]
     for var in getlist:
-      a = {"customer": var.user_name, "room": var.room}
-      getlist.append(a)
-    return render_to_response('Mawelcome.html',{"list":getlist})
+      seacus=models.UserRoom.objects.all()
+      for var2 in seacus:
+          if var2.room.room_num==var['room']:
+              precus=var2.user_name.user_name
+              a = {"customer": precus, "room": var['room']}
+              showlist.append(a)
+    return render_to_response('HotelManager.html',{"list":showlist})
 
 
     #设置计费参数
-@login_required
+#@login_required
 def setCharge(request):
     global controller,prema
     newcharge = request.GET['charge']
     newtemp = config_info.DefaultTemp
     controller.setDefaultConfig(newtemp, newcharge)
-    HttpResponseRedirect("/Manager/")
+    HttpResponseRedirect("/HotelManager/")
+
 
 @login_required
 def setTemp(request):
@@ -42,7 +47,7 @@ def setTemp(request):
     newtemp = request.GET['temp']
     newcharge = config_info.Price
     controller.setDefaultConfig(newtemp, newcharge)
-    HttpResponseRedirect("/Manager/")
+    HttpResponseRedirect("/HotelManager/")
 
 
     #开启空调

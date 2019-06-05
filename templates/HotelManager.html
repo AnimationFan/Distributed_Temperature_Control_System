@@ -12,7 +12,7 @@
 #wrap {
 	height: 719px;
 	width: 100;
-	background-image: url(({% static "1.jpg"%});
+	background-image: url({% static "1.jpg"%});
 	background-repeat: no-repeat;
 	background-position: center center;
 	position: relative;
@@ -139,27 +139,27 @@
 				<p class="p1">亲爱的：经理，欢迎光临</p>
 			</div>
             <!-- 输入框 -->
-		    <form action="/HotelManager/setTemp" method="post">
+		    <form action="/HotelManager/setTemp" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/temp.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="temp" value=""
 					placeholder="输入默认温度" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="HotelManager/setTemp">确认更改默认温度</button></a>
+				<a><button type="submit" >确认更改默认温度</button></a>
 			</div>
 			</form>
-            <form action="/HotelManager/setCharge" method="post">
+            <form action="/HotelManager/setCharge" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="charge" value=""
 					placeholder="输入计费参数" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="HotelManager/setCharge">确认更改计费参数</button></a>
+				<a><button type="submit">确认更改计费参数</button></a>
 			</div>
 			</form>
-            <form action="/HotelManager/getReport" method="post">
+            <form action="/HotelManager/getReport" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="number" name="roomId" value=""
@@ -171,7 +171,7 @@
 					placeholder="输入顾客姓名" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="/getReport">生成相应报表</button></a>
+				<a><button type="submit">生成相应报表</button></a>
 			</div>
 			</form>
             <div class="logC">

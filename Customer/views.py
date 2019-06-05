@@ -39,7 +39,7 @@ def welcome(request):
               lastone=var
     precus.currenttemp=lastone['Temp']
     precus.On=lastone['On']
-    return render_to_response('welcome.html',{'room':precus.room,'On':precus.On,'targettemp':precus.targettemp,'currenttemp':precus.currenttemp,'targetwind':precus.targetwind})
+    return render_to_response('Customer.html',{'room':precus.room,'On':precus.On,'targettemp':precus.targettemp,'currenttemp':precus.currenttemp,'targetwind':precus.targetwind})
 
     #开启空调
 @login_required

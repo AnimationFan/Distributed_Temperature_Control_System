@@ -19,7 +19,7 @@ class AirCManager:
 
 prema=AirCManager()
 
-@login_required
+#@login_required
 def welcome(request):
     global controller,prema
     if prema.p1==1:
@@ -32,17 +32,20 @@ def welcome(request):
     else:
         result2='error'
         prema.p2=0
-    givelist=[]
+
     getlist = controller.getStates()
+    showlist = []
     for var in getlist:
-      a={"customer":var.user_name,"room":var.room,"on":"关"}
-      if var["On"]==True:
-        a["on"]="开"
-      givelist.append(a)
-    return render_to_response('welcome.html',{'list':givelist,'result1':result1,'result2':result2})
+        seacus = models.UserRoom.objects.all()
+        for var2 in seacus:
+            if var2.room.room_num == var['room']:
+                precus = var2.user_name.user_name
+                a = {"customer": precus, "room": var['room'],"On":var['On']}
+                showlist.append(a)
+    return render_to_response('AirCManager.html',{'list':showlist,'result1':result1,'result2':result2})
 
     #开启中央空调
-@login_required
+#@login_required
 def TurnOn(request):
     global controller,prema
     getlist=models.UserRoom.objects.all()
@@ -50,7 +53,7 @@ def TurnOn(request):
         controller.turnOnAirC(var.user_name,var.room)
     return HttpResponseRedirect("/AirCManager/")
 
-@login_required
+#@login_required
 def turnOff(request):
     global controller,prema
     getlist=models.UserRoom.objects.all()
@@ -58,7 +61,7 @@ def turnOff(request):
         controller.turnOffAirC(var.user_name,var.room)
     return HttpResponseRedirect("/AirCManager/")
 
-@login_required
+#@login_required
 def delAirC(request):
     global controller,prema
     id=request.GET['room']
@@ -74,7 +77,7 @@ def delAirC(request):
             models.AirC.objects.filter(user='id').delete()
     return HttpResponseRedirect("/AirCManager/")
 
-@login_required
+#@login_required
 def addAirC(request):
     global controller,prema
     id = request.GET['room']
