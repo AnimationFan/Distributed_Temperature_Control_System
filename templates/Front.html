@@ -145,14 +145,14 @@
             <div class="logC">
 				<a href="logout1.html" target="_self"><button>注销用户信息</button></a>
 			</div>
-		    <form action="/getAccount" method="post">
+		    <form name="info" action="/Front/getAccount" method="post">
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="roomId" value=""
 					placeholder="输入房间号" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="/Front/getAccount">查看详单</button></a>
+				<a><button type="submit" formmethod="post" onclick="logconfir()">查看详单</button></a>
 			</div>
 			</form>
 
@@ -180,6 +180,15 @@
   </div>
 
 </div>
+<script>
+function logconfir()
+{
+     var aa=document.forms['info'];
+     if(aa.roomId.value==""){
+         alert('房间号不能为空');
+      }
+}
+</script>
 
 
 </body>

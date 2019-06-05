@@ -148,40 +148,45 @@
 	<div class="logGet">
 			<!-- 头部提示信息 -->
 			<div class="logD logDtip">
-				<p class="p1">亲爱的：<a>{{'room':self.room}}</a>用户，欢迎光临</p>
+				<p class="p1">亲爱的：<a>{{precus.room}}</a>用户，欢迎光临</p>
 			</div>
             <div class="logD logDtip">
-				<p class="p1">当前室温：<a>{{}}</a>当前预期温度：<a>{{}}</a>当前预期风速：<a>{{}}</a></p>
+				<p class="p1">当前室温：<a>{{currenttemp}}</a>当前空调状态：<a>{{precus.On}}</a>当前预期温度：<a>{{targettemp}}</a>当前预期风速：<a>{{targetwind}}</a></p>
 			</div>
             <!-- 输入框 -->
             <div class="logC">
-				<a><button  href="/Customer/TurnOn">打开空调</button></a>
+				<a><button onclick="turn_on_kongtiao()">打开空调</button></a>
 			</div>
-		    <form action="/Customer/setTemp" method="post">
+		    <form name="info1" action="/Customer/setTemp" method="post">
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="temp" value="" oninput="if(value>30)value=30;if(value<18)value=18"
-					placeholder="输入预期温度（18-30）" />
+				<input type="number" name="temp1" value="" oninput="if(value>26)value=26;if(value<18)value=18"
+					placeholder="输入预期制冷温度（18-26）" />
+			</div>
+				<div class="lgD">
+				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
+				<input type="number" name="temp2" value="" oninput="if(value>30)value=30;if(value<26)value=26"
+					placeholder="输入预期制热温度（26-30）" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="/Customer/setTemp">确认提交预期温度</button></a>
+				<a><button type="submit" formmethod="post"  onclick="logconfir1()">确认提交预期温度</button></a>
 			</div>
 				</form>
-				<form action="/Customer/setWind" method="post">
+				<form name="info2" action="/Customer/setWind" method="post" >
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
 				<input type="number" name="wind" value="" oninput="if(value>3)value=3;if(value<1)value=1"
 					placeholder="输入预期风速（1：低速 2：中速 3：高速）" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="/Customer/setWind">确认提交预期风速</button></a>
+				<a><button type="submit" formmethod="post"  onclick="logconfir2()">确认提交预期风速</button></a>
 			</div>
 			</form>
 			<div class="logC">
-                <a href="getAccount.html" target="_self"><button>计  费  查  询</button></a>
+                <a><button onclick="tankuang()">计  费  查  询</button></a>
 			</div>
            <div class="logC">
-				<a><button  href="/Customer/TurnOff">关闭空调</button></a>
+				<a><button onclick="turn_off_kongtiao()">关闭空调</button></a>
 			</div>
             <div class="logC">
 				<a href="login.html" target="_self"><button>退  出  登  陆</button></a>
@@ -208,6 +213,30 @@
 
 </div>
 
+<script>
+function logconfir1()
+{
+     var aa=document.forms['info1'];
+     if(aa.temp1.value==""&&aa.temp2.value==""){
+         alert('温度不能为空');
+      }
+     else{
+         if (aa.temp1.value != ""&&aa.temp2.value!="") {
+              alert('不能同时制冷制热');
+         }
+     }
+}
+
+function logconfir2()
+{
+     var aa=document.forms['info2'];
+     if(aa.wind.value==""){
+         alert('风速不能为空');
+      }
+}
+</script>
+
+<!--
 <script>
 	url_turn_on=""
 	url_turn_off=""
@@ -272,8 +301,43 @@
 		}
 	})
 	}
+</script>
+	var last_time = (new Date()).getTime();
+    var current_time = (new Date()).getTime();
+    function clickme(){
+        current_time = (new Date()).getTime();
+        if(current_time - last_time >= 1000){
 
+        }
+        last_time = (new Date()).getTime();
+    }
+-->
+<script>
+    function turn_off_kongtiao(){
+    	 $.post("/Customer/TurnOff",{},function(request){
 
+		  });
+    }
+    function turn_on_kongtiao(){
+    	 $.post("/Customer/TurnOn",{},function(request){
+
+		  });
+    }
+	setInterval(function(){
+	    var currenttemp = {{currenttemp}};
+	    var targettemp = {{targettemp}};
+	    if (currenttemp>=targettemp){
+	    	turn_off_kongtiao();
+	    }
+		window.location.href = "/Customer";
+
+	}, 1000);
+	function tankuang(){
+		$.post("/Customer/getAccount",{},function(request){
+			alert(result["cost"]);
+		  });
+
+	}
 </script>
 
 </body>

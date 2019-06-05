@@ -141,7 +141,7 @@
 		    <script>alert("注册失败!")</script>
 		    {% endif %}
 			<!-- 输入框 -->
-		    <form name="info" action="/login" method="get">
+		    <form name="info" action="/Front/Login" method="get">
 			<div class="lgD">
 				<img src="{% static "img/user.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="customerId" value=""
@@ -158,7 +158,7 @@
 					placeholder="房间号：" />
 			</div>
 				<div class="logC">
-				<a><button type="submit" formmethod="post" href="/Front/login" onclick="logconfir()">确  认</button></a>
+				<a><button type="submit" formmethod="post"  onclick="logconfir()">确  认</button></a>
 			</div>
 			</form>
 		    <div class="logC">

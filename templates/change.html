@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>logout1</title>
-	{% load staticfiles %}
+    <title>change</title>
+	<script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    {% load staticfiles %}
     <style type="text/css">
 *{
 	margin: 0;
@@ -12,7 +14,7 @@
 #wrap {
 	height: 719px;
 	width: 100;
-	background-image: url({% static "1.jpg"%});
+	background-image:url({% static "1.jpg"%});
 	background-repeat: no-repeat;
 	background-position: center center;
 	position: relative;
@@ -132,32 +134,37 @@
 </div>
 
 <div class="wrap" id="wrap">
-
 	<div class="logGet">
 			<!-- 头部提示信息 -->
-		    {% if result is 'error' %}
-		    <script>alert("注销失败!")</script>
-		    {% endif %}
 			<div class="logD logDtip">
-				<p class="p1">注销用户信息</p>
+				<p class="p1">修改密码</p>
 			</div>
+		    <form name="info" action="/Login/change" method="post">
 			<!-- 输入框 -->
-		<form name="info" action="/Front/Logout" method="post">
 			<div class="lgD">
-				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
-				<input type="text" name="roomId" value=""
-					placeholder="房间号：" />
+				<img src="{% static "img/user.png" %}" width="20" height="20" alt=""/>
+				<input type="text" name="username"  value=""
+					placeholder="输入账号" />
+			</div>
+			<div class="lgD">
+				<img src="{% static "img/lock.png" %}" width="20" height="20" alt=""/>
+				<input type="text" name="oldpwd"  value=""
+					placeholder="输入旧密码" />
+			</div>
+                <div class="lgD">
+				<img src="{% static "img/lock.png" %}" width="20" height="20" alt=""/>
+				<input type="text" name="newpwd"  value=""
+					placeholder="输入新密码" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post"  onclick="logconfir()">确 认 注 销</button></a>
+				<a><button type="submit" formmethod="post"  onclick="logconfir()">确认修改</button></a>
 			</div>
 			</form>
-		<div class="logC">
-				<a href="Front.html" target="_self"><button>返  回</button></a>
+        <div class="logC">
+				<a href="login.html" target="_self"><button>返  回</button></a>
 			</div>
 		</div>
 </div>
-
 
 
 <div class="footer" id="foot">
@@ -178,13 +185,23 @@
 <script>
 function logconfir()
 {
-     var aa=document.forms['info'];
-     if(aa.roomId.value==""){
-         alert('房间号不能为空');
-      }
+var aa=document.forms['info'];
+if(aa.username.value==""){
+ alert('账号不能为空');
+}
+else {
+    if (aa.oldpwd.value == "") {
+        alert('旧密码不能为空');
+    }
+    else {
+         if (aa.newpwd.value == "") {
+              alert('新密码不能为空');
+          }
+    }
+}
 }
 </script>
-
 </body>
 </html>
+
 
