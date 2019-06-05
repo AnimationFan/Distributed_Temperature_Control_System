@@ -23,7 +23,5 @@ urlpatterns = [
     path('HotelManager/',include('HotelManager.urls')),
     path('AirCManager/',include('AirCManager.urls')),
    #公共用户操作
-   path('user/',include('温控系统.urls')),
-   path('login/', include('温控系统.urls'))
-
+   path('',include('温控系统.urls')),
 ]
