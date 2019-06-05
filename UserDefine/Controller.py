@@ -1,6 +1,7 @@
 from UserDefine.ConfigReader import config_info,DefaultConfig
 import 温控系统.models
 
+
 import datetime
 import threading
 import time
@@ -121,6 +122,7 @@ class TaskList:
                 best_producer=producer
         return best_producer
 
+
 #任务处理类，负责处理任务
 class Producer():
     def __init__(self,taskList:TaskList,aircs:list,id):
@@ -186,7 +188,6 @@ class AirCState(threading.Thread):
 
 
 
-
     def turnOff(self,userId):
         #结束当前的任务，结束计费段
         self.saveRecord()
@@ -211,6 +212,7 @@ class AirCState(threading.Thread):
             if self.wind == 3:  # 高档风
                 price = (usetime / self.defaultconfig.TimeInHigh) * self.defaultconfig.Price
         return price
+
 
     def checkReach(self):
         bool_reach=False
@@ -340,6 +342,7 @@ class Controller(object):
                 price=airc.getPrice()
         return price
 
+
     #控制类函数->立即返回，延迟操作
     def setDefaultConfig(self,temp:int ,charge: float):
         # 所有启动的空调结束当前的计费段
@@ -369,6 +372,7 @@ class Controller(object):
                 airc.turnOff(userId)
                 return True
         return False
+
 
     def addAirC(self,roomNum):
         airc=温控系统.models.AirC.objects.filter(room_num=roomNum)

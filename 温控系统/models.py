@@ -22,6 +22,7 @@ class UserRoom(models.Model):
     schedulingtimes = models.IntegerField(blank=False,default=0)
     reachtimes=models.IntegerField(blank=False,default=0)
 
+
 #datetimefield存储的是一个datetime.datetime 对象
 class UseRecord(models.Model):
     WIND_SIZE=(
