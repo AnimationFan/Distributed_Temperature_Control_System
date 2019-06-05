@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer</title>
+    {% load staticfiles %}
+    <style type="text/css">
+*{
+	margin: 0;
+	padding: 0;
+}
+#wrap {
+	height: 1000px;
+	width: 100;
+	background-image: url({% static "1.jpg"%});
+	background-repeat: no-repeat;
+	background-position: center center;
+	position: relative;
+}
+#head {
+	height: 120px;
+	width: 100;
+	background-color: #F4A460;
+	text-align: center;
+	position: relative;
+}
+#foot {
+	width: 100;
+	height: 120px;
+	background-color: #CC9933;
+	position: relative;
+}
+#wrap .logGet {
+	height: 950px;
+	width: 800px;
+	position: absolute;
+	background-color: #FFFFFF;
+	top: 3%;
+	right: 4%;
+}
+.logC a button {
+	width: 100%;
+	height: 45px;
+	background-color: #ee7700;
+	border: none;
+	color: white;
+	font-size: 18px;
+}
+.logGet .logD.logDtip .p1 {
+	display: inline-block;
+	font-size: 28px;
+	margin-top: 30px;
+	width: 86%;
+}
+#wrap .logGet .logD.logDtip {
+	width: 86%;
+	border-bottom: 1px solid #ee7700;
+	margin-bottom: 60px;
+	margin-top: 0px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.logGet .lgD img {
+	position: absolute;
+	top: 12px;
+	left: 8px;
+}
+.logGet .lgD input {
+	width: 100%;
+	height: 42px;
+	text-indent: 2.5rem;
+}
+#wrap .logGet .lgD {
+	width: 86%;
+	position: relative;
+	margin-bottom: 30px;
+	margin-top: 30px;
+	margin-right: auto;
+	margin-left: auto;
+}
+#wrap .logGet .logC {
+	width: 86%;
+	margin-top: 0px;
+	margin-right: auto;
+	margin-bottom: 30px;
+	margin-left: auto;
+}
+
+
+
+.title {
+	font-family: "宋体";
+	color: #FFFFFF;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);  /* 使用css3的transform来实现 */
+	font-size: 36px;
+	height: 40px;
+	width: 30%;
+}
+
+.copyright {
+	font-family: "宋体";
+	color: #FFFFFF;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);  /* 使用css3的transform来实现 */
+	height: 60px;
+	width: 40%;
+	text-align:center;
+}
+
+
+#foot .copyright .img {
+	width: 100%;
+	height: 24px;
+	position: relative;
+}
+
+
+#foot .copyright p {
+	height: 24px;
+	width: 100%;
+}
+#rcorners1 {
+    border-radius: 25px;
+    border: 2px solid #ee7700;
+    padding: 20px;
+    width: 80%;
+    height: 42px;
+    margin-right: auto;
+	margin-bottom: 30px;
+	margin-left: auto;
+}
+
+</style>
+</head>
+
+<body>
+<div class="header" id="head">
+  <div class="title">314_G分布式温控系统</div>
+
+</div>
+
+<div class="wrap" id="wrap">
+	<div class="logGet">
+			<!-- 头部提示信息 -->
+			<div class="logD logDtip">
+				<p class="p1">亲爱的：<a>{{'room':self.room}}</a>用户，欢迎光临</p>
+			</div>
+            <div class="logD logDtip">
+				<p class="p1">当前室温：<a>{{}}</a>当前预期温度：<a>{{}}</a>当前预期风速：<a>{{}}</a></p>
+			</div>
+            <!-- 输入框 -->
+            <div class="logC">
+				<a><button  href="/Customer/TurnOn">打开空调</button></a>
+			</div>
+		    <form action="/Customer/setTemp" method="post">
+		    <div class="lgD">
+				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
+				<input type="number" name="temp" value="" oninput="if(value>30)value=30;if(value<18)value=18"
+					placeholder="输入预期温度（18-30）" />
+			</div>
+			<div class="logC">
+				<a><button type="submit" formmethod="post" href="/Customer/setTemp">确认提交预期温度</button></a>
+			</div>
+				</form>
+				<form action="/Customer/setWind" method="post">
+		    <div class="lgD">
+				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
+				<input type="number" name="wind" value="" oninput="if(value>3)value=3;if(value<1)value=1"
+					placeholder="输入预期风速（1：低速 2：中速 3：高速）" />
+			</div>
+			<div class="logC">
+				<a><button type="submit" formmethod="post" href="/Customer/setWind">确认提交预期风速</button></a>
+			</div>
+			</form>
+			<div class="logC">
+                <a href="getAccount.html" target="_self"><button>计  费  查  询</button></a>
+			</div>
+           <div class="logC">
+				<a><button  href="/Customer/TurnOff">关闭空调</button></a>
+			</div>
+            <div class="logC">
+				<a href="login.html" target="_self"><button>退  出  登  陆</button></a>
+			</div>
+		</div>
+</div>
+
+<div class="footer" id="foot">
+  <div class="copyright">
+    <div class="img">
+		<span>联系邮箱：2415726612@qq.com</span>
+	</div>
+
+	<div class="img">
+		<span>联系地址：北京邮电大学</span>
+	</div>
+
+	<div class="img">
+	    <span>联系电话：15611778965</span>
+	</div>
+
+
+  </div>
+
+</div>
+
+<script>
+	url_turn_on=""
+	url_turn_off=""
+	url_get_state=""
+	url_set_state=""
+	temp=0;
+
+
+
+	timer=null
+
+	function turn_on(){
+		var formdata=new FormData();
+		$.ajax({
+		type:"POST",
+		dataType:"json",
+		dataformdata,
+		url:url_turn_on,
+		contentType:false,
+		processData:false,
+		success:function(result){
+			//根据返回的结果，修改dom
+			/*例如：
+			temp=document.getelementById("temp");
+			temp.value=result.temp
+			wind=...
+			*/
+
+			//设置定时器
+			timer=setTimeout(checkState,60000)
+
+
+		},
+		error:function(){
+			alter("启动失败")
+		}
+	})
+	}
+
+	function get_state(){
+		var formdata=new FormData();
+		$.ajax({
+		type:"POST",
+		dataType:"json",
+		data:formdata,
+		url:url_get_state,
+		contentType:false,
+		processData:false,
+		success:function(result){
+			//根据返回的结果，修改dom
+			/*例如：
+			temp=document.getelementById("temp");
+			temp.value=result.temp
+			wind=...
+			*/
+			/*
+			if
+			*/
+		},
+		error:function(){
+			alter("启动失败")
+		}
+	})
+	}
+
+
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>getReport</title>
+    {% load staticfiles %}
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+
+
+                <hr>
+
+                <a href="HotelManager.html" target="_self" type="button" class="btn btn-success pull-right">返回</a>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-left" style="width:10%">房间号</th>
+                        <th class="text-left" style="width:10%">运行次数</th>
+                        <th class="text-left" style="width:10%">常用目标温度</th>
+                        <th class="text-left" style="width:10%">常用目标风速</th>
+                        <th class="text-left" style="width:10%">调度次数</th>
+                        <th class="text-left" style="width:10%">达到目标温度次数</th>
+                        <th class="text-left" style="width:10%">总记录数</th>
+                        <th class="text-left" style="width:10%">总开销</th>
+                    </tr>
+                    </thead>
+                <tbody>
+
+                {% for i in %}
+                <tr>
+                    <td>{{   }}</td>
+                    <td>{{runningtimes}}</td>
+                    <td>{{targettem}}</td>
+                    <td>{{targetwind}}</td>
+                    <td>{{schedulingtimes}}</td>
+                    <td>{{reachtemtimes}}</td>
+                    <td>{{notesnum}}</td>
+                    <td>{{totalcost}}</td>
+                </tr>
+                 {% endif  %}
+                </tbody>
+
+                </table> 
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
