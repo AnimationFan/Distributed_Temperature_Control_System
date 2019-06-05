@@ -141,7 +141,7 @@
 		    <script>alert("注册失败!")</script>
 		    {% endif %}
 			<!-- 输入框 -->
-		    <form action="/login" method="get">
+		    <form name="info" action="/login" method="get">
 			<div class="lgD">
 				<img src="{% static "img/user.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="customerId" value=""
@@ -158,7 +158,7 @@
 					placeholder="房间号：" />
 			</div>
 				<div class="logC">
-				<a><button type="submit" formmethod="post" href="/Front/login">确  认</button></a>
+				<a><button type="submit" formmethod="post" href="/Front/login" onclick="logconfir()">确  认</button></a>
 			</div>
 			</form>
 		    <div class="logC">
@@ -183,24 +183,26 @@
 	</div>
   </form>
 </div>
+
 <script>
 function logconfir()
 {
      var aa=document.forms['info'];
      if(aa.customerId.value==""){
-         alert('账号不能为空');
+         alert('姓名不能为空');
       }
      else{
          if (aa.password.value == "") {
               alert('密码不能为空');
          }
          else{
-              if (aa.password.value == "") {
-                   alert('密码不能为空');
+              if (aa.roomId.value == "") {
+                   alert('房间号不能为空');
               }
          }
      }
 }
 </script>
+
 </body>
 </html>

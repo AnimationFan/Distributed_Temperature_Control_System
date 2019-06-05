@@ -142,14 +142,14 @@
 				<p class="p1">注销用户信息</p>
 			</div>
 			<!-- 输入框 -->
-		<form action="/logout" method="post">
+		<form name="info" action="/logout" method="post">
 			<div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="roomId" value=""
 					placeholder="房间号：" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="/Front/logout">确 认 注 销</button></a>
+				<a><button type="submit" formmethod="post" href="/Front/logout" onclick="logconfir()">确 认 注 销</button></a>
 			</div>
 			</form>
 		<div class="logC">
@@ -175,6 +175,15 @@
 	</div>
   </form>
 </div>
+<script>
+function logconfir()
+{
+     var aa=document.forms['info'];
+     if(aa.roomId.value==""){
+         alert('房间号不能为空');
+      }
+}
+</script>
 
 </body>
 </html>
