@@ -17,4 +17,7 @@
     <ChangeSpeed modle="HighWind" speed="0.6"/>
     <ChangeSpeed modle="MiddleWind" speed="0.5"/>
     <ChangeSpeed modle="LowWind" speed="0.4"/>
+
+    <!--设定处理者数量 -->
+    <Producer num="4"/>
 </ini>
