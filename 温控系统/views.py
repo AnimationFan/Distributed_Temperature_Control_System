@@ -35,14 +35,15 @@ def init(request):
 
 
 def login(request):
-
-    username = request.GET['name']
-    pwd = request.GET['password']
+    username = request.POST.get('name')
+    pwd = request.POST.get('password')
     user = User.objects.filter(user_name=username, password=pwd)
     if user:
+        temp = auth.authenticate(username = 'temp', password='123456')
+        auth.login(request, temp)
         user = user[0]
         if user.user_type == 'C':
-            url='/Customer/cus/'+username
+            url = '/Customer/cus/' + username
             return HttpResponseRedirect(url)
         elif user.user_type == 'F':
             return HttpResponseRedirect('/Front/')
@@ -52,7 +53,7 @@ def login(request):
             return HttpResponseRedirect('/HotelManager/')
 
     else:
-        return HttpResponse('用户名或密码错误。')
+      return HttpResponse('用户名或密码错误。')
 
 
 def logout(request):
