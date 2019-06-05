@@ -38,18 +38,16 @@ def login(request):
     username = request.POST.get('name')
     pwd = request.POST.get('password')
     user = User.objects.filter(user_name=username, password=pwd)
-    if user:
-        temp = auth.authenticate(username = 'temp', password='123456')
-        auth.login(request, temp)
-        user = user[0]
-        if user.user_type == 'C':
+    if user.count()>0:
+        preuser = user[0]
+        if preuser.user_type == 'C':
             url = '/Customer/cus/' + username
             return HttpResponseRedirect(url)
-        elif user.user_type == 'F':
+        elif preuser.user_type == 'F':
             return HttpResponseRedirect('/Front/')
-        elif user.user_type == 'A':
+        elif preuser.user_type == 'A':
             return HttpResponseRedirect('/AirCManager/')
-        elif user.user_type == 'H':
+        elif preuser.user_type == 'H':
             return HttpResponseRedirect('/HotelManager/')
 
     else:
