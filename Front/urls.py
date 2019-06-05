@@ -1,7 +1,10 @@
+from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path,include
+from Front import views
 
 urlpatterns = [
-
-
+    url('login/', views.login),
+    url('getAccount/', views.getAccount),
+    url('logout/', views.logout),
+    url(r'', views.welcome),
 ]

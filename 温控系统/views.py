@@ -35,13 +35,15 @@ def init(request):
 
 
 def login(request):
+
     username = request.GET['name']
     pwd = request.GET['password']
     user = User.objects.filter(user_name=username, password=pwd)
     if user:
         user = user[0]
         if user.user_type == 'C':
-            return HttpResponseRedirect('/Customer/')
+            url='/Customer/cus/'+username
+            return HttpResponseRedirect(url)
         elif user.user_type == 'F':
             return HttpResponseRedirect('/Front/')
         elif user.user_type == 'A':

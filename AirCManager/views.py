@@ -38,9 +38,9 @@ def welcome(request):
     for var in getlist:
         seacus = models.UserRoom.objects.all()
         for var2 in seacus:
-            if var2.room.room_num == var['room']:
+            if var2.room.room_num == var['RoomNum']:
                 precus = var2.user_name.user_name
-                a = {"customer": precus, "room": var['room'],"On":var['On']}
+                a = {"customer": precus, "room": var['RoomNum'],"On":var['On']}
                 showlist.append(a)
     return render_to_response('AirCManager.html',{'list':showlist,'result1':result1,'result2':result2})
 

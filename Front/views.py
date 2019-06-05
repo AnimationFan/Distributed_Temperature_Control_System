@@ -1,3 +1,71 @@
+from django.shortcuts import render_to_response
+
 from django.shortcuts import render
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from UserDefine.Controller import Controller, controller
+from 温控系统 import models
+from UserDefine.ConfigReader import config_info, DefaultConfig
+
+# -*- coding: UTF-8 -*-
+
+
+#@login_required
+def welcome(quest):
+    getlist = controller.getStates()
+    showlist=[]
+    for var in getlist:
+      seacus=models.UserRoom.objects.all()
+      for var2 in seacus:
+          if var2.room.room_num==var['RoomNum']:
+              precus=var2.user_name.user_name
+              a = {"customer": precus, "room": var['RoomNum']}
+              showlist.append(a)
+    return render_to_response('Front.html',{"list":showlist})
+
+
+#@login_required
+def login(request):
+    user = request.GET['customerId']
+    pwd = request.GET['password']
+    roomid = request.GET['roomId']
+    if user in models.User.objects.all().values_list('user_name'):
+        message = '用户名已存在。'
+    elif roomid not in models.AirC.objects.all().values_list('room_num'):
+        message = "房间不存在。"
+    else:
+        models.User.objects.create(user_name= user, password = pwd, user_type = 'C')
+        models.UserRoom.objects.create(user_name= user, room = roomid, schedulingtimes = '0',reachtimes='0')
+        message = '注册成功。'
+    return HttpResponse(message)
+
+#@login_required
+def getAccount(request):
+    global controller
+    roomid = request.GET['roomId']
+    temp = models.UserRoom.objects.filter(room=roomid)
+    user = temp.user_name
+    record = models.UseRecord.objects.filter(user_name= user, room_num = roomid)
+    totalcost = 0.0
+
+    for var in record:
+        totalcost += var.price
+    totalcost += controller.getAccount(roomid, user)
+
+    return render(request, 'Account.html', {'list': record, 'cost':totalcost})
+
+#@login_required
+def logout(request):
+    roomid = request.GET['roomId']
+    temp = models.UserRoom.objects.filter(room= roomid)
+    user = temp.user_name
+    if roomid not in models.AirC.objects.all().values_list('room_num'):
+        message = "房间不存在。"
+    else:
+        models.UserRoom.objects.filter(room= roomid).delete()
+        models.User.objects.filter(user_name= user).delete()
+        message = '注销成功。'
+    return HttpResponse(message)
+
 
 # Create your views here.

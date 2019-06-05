@@ -148,16 +148,16 @@
 	<div class="logGet">
 			<!-- 头部提示信息 -->
 			<div class="logD logDtip">
-				<p class="p1">亲爱的：<a>{{'room':self.room}}</a>用户，欢迎光临</p>
+				<p class="p1">亲爱的：<a>{{room}}</a>用户，欢迎光临</p>
 			</div>
             <div class="logD logDtip">
-				<p class="p1">当前室温：<a>{{}}</a>当前预期温度：<a>{{}}</a>当前预期风速：<a>{{}}</a></p>
+				<p class="p1">当前室温：<a>{{currenttemp}}</a>当前预期温度：<a>{{targettemp}}</a>当前预期风速：<a>{{targetwind}}</a></p>
 			</div>
             <!-- 输入框 -->
             <div class="logC">
 				<a><button  href="/Customer/TurnOn">打开空调</button></a>
 			</div>
-		    <form action="/Customer/setTemp" method="post">
+		    <form action="/Customer/setTemp" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
 				<input type="number" name="temp" value="" oninput="if(value>30)value=30;if(value<18)value=18"
@@ -167,7 +167,7 @@
 				<a><button type="submit" formmethod="post" href="/Customer/setTemp">确认提交预期温度</button></a>
 			</div>
 				</form>
-				<form action="/Customer/setWind" method="post">
+				<form action="/Customer/setWind" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
 				<input type="number" name="wind" value="" oninput="if(value>3)value=3;if(value<1)value=1"
