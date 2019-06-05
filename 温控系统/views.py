@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from UserDefine.ConfigReader import config_info
 from 温控系统.models import User,AirC
@@ -10,7 +11,7 @@ def show_config(request):
 # Create your views here.
 
 def login(request):
-    return HttpResponse('LOGIN')
+    return render_to_response('login.html')
 # Create your views here.
 
 def init(request):
