@@ -17,12 +17,12 @@ class Manager:
 
 preMa=Manager()
 
-@login_required
+#@login_required
 def welcome(request):
     getlist = []
     getlist = controller.getStates()
     for var in getlist:
-      a = {"customer": var.user_name, "room": var.room}
+      a = {"customer": var['user_name'], "room": var['room']}
       getlist.append(a)
     return render_to_response('Mawelcome.html',{"list":getlist})
 
