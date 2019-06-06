@@ -14,7 +14,7 @@
 
                 <hr>
 
-                <a href="Customer.html" target="_self" type="button" class="btn btn-success pull-right">返回</a>
+                <a href="Front.html" target="_self" type="button" class="btn btn-success pull-right">返回</a>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -26,15 +26,15 @@
                     </thead>
                 <tbody>
 
-                {% for %}
+                {% for i in list %}
                 <tr>
-                    <td>{{   }}</td>
-                    <td>{{   }}</td>
+                    <td>{{ i.time  }}</td>
+                    <td>{{ i.temp }}</td>
 
-                    <td>{{   }}</td>
-                    <td>{{   }}</td>
+                    <td>{{ i.wind  }}</td>
+                    <td>{{ i.cost  }}</td>
 
-                </tr>
+                </tr>
                 {% endif  %}
 
                 </tbody>

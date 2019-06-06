@@ -63,7 +63,7 @@ def TurnOn(request):
     #设置温度
 def setTemp(request):
     global controller
-    t = request.GET['temp']
+    t = request.POST.get('temp')
     t = int(t)
     precus.targettemp = t
     w=precus.targetwind
@@ -74,7 +74,7 @@ def setTemp(request):
 #@login_required
 def setWind(request):
     global controller
-    w = request.GET['wind']
+    w = request.POST.get('wind')
     w = int(w)
     precus.targetwind = w
     t=precus.targettemp

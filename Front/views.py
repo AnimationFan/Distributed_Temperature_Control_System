@@ -11,7 +11,7 @@ from UserDefine.ConfigReader import config_info, DefaultConfig
 
 
 #@login_required
-def welcome(quest):
+def welcome(request):
     getlist = controller.getStates()
     showlist=[]
     for var in getlist:
@@ -21,7 +21,7 @@ def welcome(quest):
               precus=var2.user_name.user_name
               a = {"customer": precus, "room": var['RoomNum']}
               showlist.append(a)
-    return render_to_response('Front.html',{"list":showlist})
+    return render(request,'Front.html',{"list":showlist})
 
 
 #@login_required

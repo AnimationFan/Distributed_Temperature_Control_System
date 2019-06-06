@@ -6,7 +6,7 @@ urlpatterns=[
     path('init/',views.init),
     path('add/',views.addair),
     path('del/',views.delair),
-    path('login/', views.login),
+    path('Login/', views.login),
     path('logout/', views.logout),
     path('setPassWord/', views.setPassWord),
     path(r'', views.welcome)

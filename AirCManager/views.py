@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from UserDefine.Controller import Controller,controller
 from django.http import HttpResponseRedirect
@@ -42,7 +43,7 @@ def welcome(request):
                 precus = var2.user_name.user_name
                 a = {"customer": precus, "room": var['RoomNum'],"On":var['On']}
                 showlist.append(a)
-    return render_to_response('AirCManager.html',{'list':showlist,'result1':result1,'result2':result2})
+    return render(request,'AirCManager.html',{'list':showlist,'result1':result1,'result2':result2})
 
     #开启中央空调
 #@login_required
@@ -64,7 +65,7 @@ def turnOff(request):
 #@login_required
 def delAirC(request):
     global controller,prema
-    id=request.GET['room']
+    id=request.POST.get('room')
     result='success'
     search1=models.AirC.objects.filter(user=id)
     if search1.count()==0:
@@ -80,7 +81,7 @@ def delAirC(request):
 #@login_required
 def addAirC(request):
     global controller,prema
-    id = request.GET['room']
+    id = request.POST.get('room')
     prema.p1 = 'success'
     search1 = models.AirC.objects.filter(user=id)
     if search1.count()>0:

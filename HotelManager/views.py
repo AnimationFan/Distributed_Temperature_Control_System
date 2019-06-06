@@ -1,7 +1,9 @@
 from django.shortcuts import render_to_response
+from django.shortcuts import render
 
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from UserDefine.Controller import Controller,controller
 from 温控系统 import models
 from UserDefine.ConfigReader import config_info,DefaultConfig
@@ -28,42 +30,38 @@ def welcome(request):
               precus=var2.user_name.user_name
               a = {"customer": precus, "room": var['RoomNum']}
               showlist.append(a)
-    return render_to_response('HotelManager.html',{"list":showlist})
+    return render(request,'HotelManager.html',{"list":showlist})
 
 
     #设置计费参数
 #@login_required
 def setCharge(request):
     global controller,prema
-    newcharge = request.GET['charge']
+    newcharge = request.POST.get['charge']
     newtemp = config_info.DefaultTemp
     controller.setDefaultConfig(newtemp, newcharge)
     HttpResponseRedirect("/HotelManager/")
 
 
-@login_required
+#@login_required
 def setTemp(request):
     global controller,prema
-    newtemp = request.GET['temp']
+    newtemp = request.POST.get('temp')
     newcharge = config_info.Price
     controller.setDefaultConfig(newtemp, newcharge)
     HttpResponseRedirect("/HotelManager/")
 
 
     #开启空调
-@login_required
+#@login_required
 def getReport(request):
     global controller,prema
-    customer = request.GET['customerID']
-    room = request.GET['roomID']
-
-    getlist = models.UseRecord.objects.filter(room_num=room,user_name=customer)
-    length=len(getlist)
+    customer = request.POST.get('customerID')
+    room = request.POST.get('roomID')
 
     runningtimes=0
     targettem = 0
     targetwind = 0
-    reachtemtimes=0
 
     alltem = []
     allwind = []
@@ -72,7 +70,18 @@ def getReport(request):
     currenttem=defaulttem
 
     #到达温度次数
-    pre = models.UserRoom.objects.get(user_name=customer)
+    seacus=models.User.objects.filter(user_name=customer)
+    if seacus.count()==0:
+        return HttpResponse(customer)
+    precus=seacus.get(user_name=customer)
+    searoom = models.AirC.objects.filter(room_num=room)
+    if searoom.count() == 0:
+        return HttpResponse("查找失败2"+room)
+    preroom = searoom.get(room_num=room)
+    seauserroom=models.UserRoom.objects.filter(user_name=precus,room=preroom)
+    if seauserroom.count()==0:
+        return HttpResponse("查找失败3")
+    pre = seauserroom.get(user_name=precus)
     reachtemtimes = pre.reachtimes
 
     for i in range(0,length-1):

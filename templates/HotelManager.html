@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>hotelManager</title>
-    {% load staticfiles %}
+	{% load staticfiles %}
     <style type="text/css">
 *{
 	margin: 0;
@@ -139,27 +139,30 @@
 				<p class="p1">亲爱的：经理，欢迎光临</p>
 			</div>
             <!-- 输入框 -->
-		    <form action="/HotelManager/setTemp" method="get">
+		    <form action="/HotelManager/setTemp" method="post">
+                {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/temp.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="temp" value=""
 					placeholder="输入默认温度" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" >确认更改默认温度</button></a>
+				<a><button type="submit" formmethod="post" >确认更改默认温度</button></a>
 			</div>
 			</form>
-            <form action="/HotelManager/setCharge" method="get">
+            <form name="info1" action="/HotelManager/setCharge" method="post">
+                {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="charge" value=""
 					placeholder="输入计费参数" />
 			</div>
 			<div class="logC">
-				<a><button type="submit">确认更改计费参数</button></a>
+				<a><button type="submit" formmethod="post"  onclick="logconfir1()">确认更改计费参数</button></a>
 			</div>
 			</form>
-            <form action="/HotelManager/getReport" method="get">
+            <form name="info2" action="/HotelManager/getReport" method="post">
+                {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="number" name="roomId" value=""
@@ -171,7 +174,7 @@
 					placeholder="输入顾客姓名" />
 			</div>
 			<div class="logC">
-				<a><button type="submit">生成相应报表</button></a>
+				<a><button type="submit" formmethod="post"  onclick="logconfir2()">生成相应报表</button></a>
 			</div>
 			</form>
             <div class="logC">
@@ -198,8 +201,28 @@
   </div>
 
 </div>
+<script>
+function logconfir1()
+{
+     var aa=document.forms['info1'];
+     if(aa.charge.value==""){
+         alert('计费参数不能为空');
+      }
+}
 
-
+function logconfir2()
+{
+     var aa=document.forms['info2'];
+     if(aa.roomId.value==""){
+         alert('房间号不能为空');
+      }
+     else{
+          if(aa.customerId.value==""){
+                alert('顾客姓名不能为空');
+          }
+     }
+}
+</script>
 </body>
 </html>
 

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>AirManager</title>
-    {% load staticfiles %}
+	{% load staticfiles %}
     <style type="text/css">
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
 *{
 	margin: 0;
 	padding: 0;
@@ -12,7 +13,7 @@
 #wrap {
 	height: 800px;
 	width: 100;
-	background-image: url({% static "1.jpg"%});
+	background-image: url(1.jpg);
 	background-repeat: no-repeat;
 	background-position: center center;
 	position: relative;
@@ -140,10 +141,10 @@
 			</div>
             <!-- 输入框 -->
 		    <div class="logC">
-				<a><button  href="/AirCManager/TurnOn">打开空调</button></a>
+				<a><button onclick="turn_on_kongtiao()">打开空调</button></a>
 			</div>
 		    <div class="logC">
-				<a><button  href="/AirCManager/TurnOff">关闭空调</button></a>
+				<a><button onclick="turn_off_kongtiao()">关闭空调</button></a>
 			</div>
             {% if result1 is 'error' %}
 		    <script>alert("添加房间失败!")</script>
@@ -151,24 +152,24 @@
 		    {% if result2 is 'error' %}
 		    <script>alert("删除房间失败!")</script>
 		    {% endif %}
-		    <form action="/AirCManager/addAirC" method="post">
+		    <form name="info1" action="/AirCManager/addAirC" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="number" name="room" value=""
 					placeholder="输入房间号" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="/AirCManager/addAirC">增加房间</button></a>
+				<a><button type="submit" formmethod="get" onclick="logconfir1()">增加房间</button></a>
 			</div>
 			</form>
-				<form action="/AirCManager/delAirC" method="post">
+				<form name="info2" action="/AirCManager/delAirC" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="number" name="room" value=""
 					placeholder="输入房间号" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post" href="/AirCManager/delAirC">删除房间</button></a>
+				<a><button type="submit" formmethod="get" onclick="logconfir2()">删除房间</button></a>
 			</div>
 			</form>
             <div class="logC">
@@ -190,13 +191,66 @@
 	<div class="img">
 	    <span>联系电话：15611778965</span>
 	</div>
-
-
   </div>
-
 </div>
+<div class="wrapper">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <hr>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-left" style="width:10%">房间号</th>
+                        <th class="text-left" style="width:10%">顾客姓名</th>
+                        <th class="text-left" style="width:10%">空调状态</th>
+                    </tr>
+                    </thead>
+                <tbody>
 
+                {% for item in list  %}
+                <tr>
+                    <td>{{ item.room.room_num  }}</td>
+                    <td>{{ item.customer }}</td>
+                    <td>{{ item.On }}</td>
+                </tr>
+                 {% endif  %}
+                </tbody>
 
+                </table> 
+
+            </div>
+        </div>
+    </div>
+<script>
+function logconfir1()
+{
+     var aa=document.forms['info1'];
+     if(aa.room.value==""){
+         alert('房间号不能为空');
+      }
+}
+function logconfir2()
+{
+     var aa=document.forms['info2'];
+     if(aa.room.value==""){
+         alert('房间号不能为空');
+      }
+}
+    function turn_off_kongtiao(){
+    	 $.get("/AirCManager/TurnOff",{},function(request){
+
+		  });
+    }
+    function turn_on_kongtiao(){
+    	 $.get("/AirCManager/TurnOn",{},function(request){
+
+		  });
+    }
+    setInterval(function(){
+		window.location.href = "/AirCManager";
+
+	},1000);
+</script>
 </body>
 </html>
 
