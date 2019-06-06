@@ -4,6 +4,7 @@ from UserDefine.ConfigReader import config_info
 from 温控系统.models import User,AirC
 from UserDefine.Controller import controller
 from django.contrib import auth
+from UserDefine.SessionCheck import  SessionCheck
 
 def addair(request):
     print(controller.getStates())
@@ -62,7 +63,7 @@ def logout(request):
 def setPassWord(request):
     username = request.GET['username']
     oldpwd = request.GET['oldpwd']
-    oldpwd = request.GET['newpwd']
+    newpwd = request.GET['newpwd']
     user = User.objects.filter(user_name=username, password=oldpwd)
     if user:
         User.objects.filter(user_name=username).update(password=newpwd)
@@ -72,3 +73,18 @@ def setPassWord(request):
 
 def welcome(request):
     return render(request, 'login.html')
+
+def writesession(request):
+    SessionCheck.writeSession(request,"1004","1004","C")
+    return HttpResponse("写入session成功")
+
+def readsession(request):
+    result=SessionCheck.readSession(request)
+    return HttpResponse(result["user_name"]+result["password"]+result["type"])
+
+def test_decoratort(request):
+    result= SessionCheck.checkSession(request)
+    if result:
+        return  HttpResponse("Success")
+    else:
+        return HttpResponse("Faile")
