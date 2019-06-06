@@ -65,10 +65,17 @@ def setTemp(request):
     global controller
     t = request.POST.get('temp')
     t = int(t)
+    mode = request.POST.get('mode')
+    if mode=="tohot":
+        if t>36 or t<21:
+         return HttpResponse('制热模式温度输入错误')
+    if mode=="tocold":
+        if t>31 or t<16:
+         return HttpResponse('制冷模式温度输入错误')
     precus.targettemp = t
     w=precus.targetwind
     controller.setAirCState(precus.room,t,w,precus.id)
-    HttpResponseRedirect("/Customer/")
+    return HttpResponseRedirect("/Customer/")
 
     #设置风速
 #@login_required
