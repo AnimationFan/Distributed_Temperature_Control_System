@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect,HttpResponse
@@ -37,6 +38,7 @@ def inita(request):
 #@login_required
 def welcome(request,username):
     precus.id = username
+    precus.id=str(precus.id)
     seacus=models.User.objects.get(user_name=username)
     pre = models.UserRoom.objects.get(user_name=seacus)
     preroom=pre.room.room_num
@@ -51,19 +53,22 @@ def welcome(request,username):
         precus.On="开"
     else:
         precus.On="关"
-    return render_to_response('Customer.html',{'room':precus.room,'On':precus.On,'targettemp':precus.targettemp,'currenttemp':precus.currenttemp,'targetwind':precus.targetwind})
+    return render(request,'Customer.html',{'ID':precus.id,'On':precus.On,'targettemp':precus.targettemp,'currenttemp':precus.currenttemp,'targetwind':precus.targetwind})
 
     #开启空调
 #@login_required
 def TurnOn(request):
     global controller
     controller.turnOnAirC(precus.id,precus.room)
-    HttpResponseRedirect("/Customer/")
+    url = '/Customer/cus/' + precus.id
+    return HttpResponseRedirect(url)
 
     #设置温度
 def setTemp(request):
     global controller
     t = request.POST.get('temp')
+    if t=='':
+        return HttpResponse('温度输入错误')
     t = int(t)
     mode = request.POST.get('mode')
     if mode=="tohot":
@@ -75,18 +80,22 @@ def setTemp(request):
     precus.targettemp = t
     w=precus.targetwind
     controller.setAirCState(precus.room,t,w,precus.id)
-    return HttpResponseRedirect("/Customer/")
+    url = '/Customer/cus/' + precus.id
+    return HttpResponseRedirect(url)
 
     #设置风速
 #@login_required
 def setWind(request):
     global controller
     w = request.POST.get('wind')
+    if w=='':
+        return HttpResponse('风速输入错误')
     w = int(w)
     precus.targetwind = w
     t=precus.targettemp
     controller.setAirCState(precus.room,t,w,precus.id)
-    HttpResponseRedirect("/Customer/")
+    url = '/Customer/cus/' + precus.id
+    return HttpResponseRedirect(url)
 
 #@login_required
 def getAccount(request):
@@ -96,13 +105,16 @@ def getAccount(request):
     for var in getlist:
       totalcost=totalcost+var.price
     totalcost=totalcost+controller.getAccount(precus.room,precus.id)
-    return render_to_response('Account.html',{'cost':totalcost})
+    totalcost=str(totalcost)
+    return HttpResponse(totalcost)
+    #return render_to_response('Account.html',{'cost':totalcost})
 
 #@login_required
-def turnOff(request):
+def TurnOff(request):
    global controller
-   controller.turnOnAirC(precus.id,precus.room)
-   HttpResponseRedirect("/Customer/")
+   controller.turnOffAirC(precus.id,precus.room)
+   url = '/Customer/cus/' + precus.id
+   return HttpResponseRedirect(url)
 
 
 

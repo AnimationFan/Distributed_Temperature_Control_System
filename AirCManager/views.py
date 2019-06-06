@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import render
 
 from UserDefine.Controller import Controller,controller
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.contrib.auth.decorators import login_required
 from 温控系统 import models
 from UserDefine.ConfigReader import config_info,DefaultConfig
@@ -66,24 +66,30 @@ def turnOff(request):
 def delAirC(request):
     global controller,prema
     id=request.POST.get('room')
+    if id=='':
+        return HttpResponse('空调号输入错误')
     result='success'
-    search1=models.AirC.objects.filter(user=id)
+    search1=models.AirC.objects.filter(room_num=id)
     if search1.count()==0:
         prema.p2=0
+        return HttpResponse('空调号输入错误')
     else:
-        search2=models.UserRoom.objects.filter(user_name=id)
+        search2=models.UserRoom.objects.filter(room=id)
         if search2.count()>0:
             prema.p2=0
+            return HttpResponse('空调号输入错误')
         else:
-            models.AirC.objects.filter(user='id').delete()
+            models.AirC.objects.filter(room_num=id).delete()
     return HttpResponseRedirect("/AirCManager/")
 
 #@login_required
 def addAirC(request):
     global controller,prema
     id = request.POST.get('room')
+    if id=='':
+        return HttpResponse('空调号输入错误')
     prema.p1 = 'success'
-    search1 = models.AirC.objects.filter(user=id)
+    search1 = models.AirC.objects.filter(room_num=id)
     if search1.count()>0:
         prema.p1=0
     else:

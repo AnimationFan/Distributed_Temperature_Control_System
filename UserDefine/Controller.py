@@ -135,7 +135,7 @@ class Producer():
             return
         else:
             #先释放原来的任务
-            self.releaseTask()
+            self.releaseTask()#原来的task已经被释放到了taskList当中
             for airc in self.aircs:
                 if airc.roomNum==task.targetRoom and (airc.user==task.userId or airc.user==None):
                     self.task=task
@@ -147,7 +147,6 @@ class Producer():
 
 
     def removeTask(self):#任务完成直接移除当前的任务
-        self.control_airc=None
         wind=0
         if self.task != None:
             wind=self.task.targetWind
@@ -240,8 +239,8 @@ class AirCState(threading.Thread):
         endtime=datetime.datetime.now()
         record=温控系统.models.UseRecord(begin_time=self.begintime,
                           end_time=endtime,
-                          user_name=self.user,
-                          room_num=self.roomNum,
+                          user_name=温控系统.models.User.objects.get(user_name=self.user),
+                          room_num=温控系统.models.AirC.objects.get(room_num=self.roomNum),
                           wind=self.wind,
                           temp=self.targetTemp,
                           price=self.getPrice()

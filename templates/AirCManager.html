@@ -13,7 +13,7 @@
 #wrap {
 	height: 800px;
 	width: 100;
-	background-image: url(1.jpg);
+	background-image: url({% static "1.jpg"%});
 	background-repeat: no-repeat;
 	background-position: center center;
 	position: relative;
@@ -141,9 +141,11 @@
 			</div>
             <!-- 输入框 -->
 		    <div class="logC">
+                <button><a href="./TurnOn" target="_self" type="button" class="btn btn-success pull-right">打开中央空调</a></button>
 				<a><button onclick="turn_on_kongtiao()">打开空调</button></a>
 			</div>
 		    <div class="logC">
+                <button><a href="./TurnOff" target="_self" type="button" class="btn btn-success pull-right">关闭中央空调</a></button>
 				<a><button onclick="turn_off_kongtiao()">关闭空调</button></a>
 			</div>
             {% if result1 is 'error' %}
@@ -152,24 +154,26 @@
 		    {% if result2 is 'error' %}
 		    <script>alert("删除房间失败!")</script>
 		    {% endif %}
-		    <form name="info1" action="/AirCManager/addAirC" method="get">
+		    <form name="info1" action="/AirCManager/addAirC/" method="post">
+                {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="room" value=""
+				<input type="text" name="room" value=""
 					placeholder="输入房间号" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="get" onclick="logconfir1()">增加房间</button></a>
+				<a><button type="submit" formmethod="post" onclick="logconfir1()">增加房间</button></a>
 			</div>
 			</form>
-				<form name="info2" action="/AirCManager/delAirC" method="get">
+				<form name="info2" action="/AirCManager/delAirC/" method="post">
+                    {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="room" value=""
+				<input type="text" name="room" value=""
 					placeholder="输入房间号" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="get" onclick="logconfir2()">删除房间</button></a>
+				<a><button type="submit" formmethod="post" onclick="logconfir2()">删除房间</button></a>
 			</div>
 			</form>
             <div class="logC">
@@ -207,13 +211,13 @@
                     </thead>
                 <tbody>
 
-                {% for item in list  %}
+                {% for item in list %}
                 <tr>
                     <td>{{ item.room.room_num  }}</td>
                     <td>{{ item.customer }}</td>
                     <td>{{ item.On }}</td>
                 </tr>
-                 {% endif  %}
+                 {% endfor %}
                 </tbody>
 
                 </table> 
@@ -249,7 +253,7 @@ function logconfir2()
     setInterval(function(){
 		window.location.href = "/AirCManager";
 
-	},1000);
+	},60000);
 </script>
 </body>
 </html>

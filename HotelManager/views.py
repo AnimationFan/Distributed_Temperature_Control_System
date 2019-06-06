@@ -14,13 +14,16 @@ Default=DefaultConfig()
 
 class Manager:
 
+    pretemp=Default.DefaultTemp
+    precharge=Default.Price
     def __init__(self):
         pass
 
-preMa=Manager()
+prema=Manager()
 
 #@login_required
 def welcome(request):
+    global controller,prema
     getlist = controller.getStates()
     showlist=[]
     for var in getlist:
@@ -30,7 +33,7 @@ def welcome(request):
               precus=var2.user_name.user_name
               a = {"customer": precus, "room": var['RoomNum']}
               showlist.append(a)
-    return render(request,'HotelManager.html',{"list":showlist})
+    return render(request,'HotelManager.html',{"list":showlist,'temp':prema.pretemp,'charge':prema.precharge})
 
 
     #设置计费参数
@@ -41,7 +44,8 @@ def setCharge(request):
     newtemp = config_info.DefaultTemp
     newcharge = float(newcharge)
     controller.setDefaultConfig(newtemp, newcharge)
-    HttpResponseRedirect("/HotelManager/")
+    prema.precharge=newcharge
+    return HttpResponseRedirect("/HotelManager/")
 
 
 #@login_required
@@ -51,7 +55,8 @@ def setTemp(request):
     newcharge = config_info.Price
     newtemp = float(newtemp)
     controller.setDefaultConfig(newtemp, newcharge)
-    #return HttpResponseRedirect("/HotelManager/")
+    prema.pretemp=newtemp
+    return HttpResponseRedirect("/HotelManager/")
 
 
     #开启空调
