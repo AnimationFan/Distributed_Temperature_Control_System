@@ -139,7 +139,7 @@
 				<p class="p1">亲爱的：经理，欢迎光临</p>
 			</div>
             <!-- 输入框 -->
-		    <form action="/HotelManager/setTemp" method="post">
+		    <form action="/HotelManager/setTemp/" method="post">
                 {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/temp.png" %}" width="20" height="20" alt=""/>
@@ -150,7 +150,7 @@
 				<a><button type="submit" formmethod="post" >确认更改默认温度</button></a>
 			</div>
 			</form>
-            <form name="info1" action="/HotelManager/setCharge" method="post">
+            <form name="info1" action="/HotelManager/setCharge/" method="post">
                 {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
@@ -161,16 +161,16 @@
 				<a><button type="submit" formmethod="post"  onclick="logconfir1()">确认更改计费参数</button></a>
 			</div>
 			</form>
-            <form name="info2" action="/HotelManager/getReport" method="post">
+            <form name="info2" action="/HotelManager/getReport/" method="post">
                 {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="roomId" value=""
+				<input type="text" name="roomID" value=""
 					placeholder="输入房间号" />
 			</div>
 				<div class="lgD">
 				<img src="{% static "img/user.png" %}" width="20" height="20" alt=""/>
-				<input type="text" name="customerId" value=""
+				<input type="text" name="customerID" value=""
 					placeholder="输入顾客姓名" />
 			</div>
 			<div class="logC">

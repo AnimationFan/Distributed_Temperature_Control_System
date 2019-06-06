@@ -37,8 +37,9 @@ def welcome(request):
 #@login_required
 def setCharge(request):
     global controller,prema
-    newcharge = request.POST.get['charge']
+    newcharge = request.POST.get('charge')
     newtemp = config_info.DefaultTemp
+    newcharge = float(newcharge)
     controller.setDefaultConfig(newtemp, newcharge)
     HttpResponseRedirect("/HotelManager/")
 
@@ -48,8 +49,9 @@ def setTemp(request):
     global controller,prema
     newtemp = request.POST.get('temp')
     newcharge = config_info.Price
+    newtemp = float(newtemp)
     controller.setDefaultConfig(newtemp, newcharge)
-    HttpResponseRedirect("/HotelManager/")
+    #return HttpResponseRedirect("/HotelManager/")
 
 
     #开启空调
@@ -66,9 +68,6 @@ def getReport(request):
     alltem = []
     allwind = []
 
-    defaulttem=config_info.DefaultTemp
-    currenttem=defaulttem
-
     #到达温度次数
     seacus=models.User.objects.filter(user_name=customer)
     if seacus.count()==0:
@@ -76,12 +75,18 @@ def getReport(request):
     precus=seacus.get(user_name=customer)
     searoom = models.AirC.objects.filter(room_num=room)
     if searoom.count() == 0:
-        return HttpResponse("查找失败2"+room)
+        return HttpResponse("查找失败2")
     preroom = searoom.get(room_num=room)
     seauserroom=models.UserRoom.objects.filter(user_name=precus,room=preroom)
+
+    getlist = models.UseRecord.objects.filter(user_name=customer,room_num=room)
+    length=len(getlist)
+
     if seauserroom.count()==0:
         return HttpResponse("查找失败3")
     pre = seauserroom.get(user_name=precus)
+
+    #到达目标温度次数
     reachtemtimes = pre.reachtimes
 
     for i in range(0,length-1):
@@ -89,29 +94,6 @@ def getReport(request):
          # 记录运行次数
       if (getlist[i].end_time!=getlist[i+1].begin_time):
            runningtimes+1
-           temdepart = abs(defaulttem - currenttem)
-           reachtime = temdepart * 5
-           timedepart = (getlist[i+1].begin_time - getlist[i].end_time).total_seconds()/60
-           if (timedepart > reachtime):
-             currenttem = defaulttem
-           else:
-               if defaulttem > currenttem:
-                   currenttem = currenttem + timedepart / 5
-               else:
-                   currenttem = currenttem - timedepart / 5
-
-         #记录到达目标温度次数
-     #temdepart = abs(getlist[i].temp-currenttem)
-         #reachtime = temdepart*5
-         #timedepart = (getlist[i].begin_time - getlist[i].end_time).total_seconds()/60
-         #if (timedepart>reachtime):
-             #reachtemtimes=reachtemtimes+1
-             #currenttem=getlist[i].temp
-         #else:
-             #if getlist[i].temp>currenttem:
-                #currenttem=currenttem+timedepart/5
-             #else:
-                 #currenttem=currenttem-timedepart/5
 
 
       #记录全部风速、温度
@@ -137,7 +119,7 @@ def getReport(request):
         targetwind = i
 
        #记录调度次数
-    preid=models.UserRoom.objects.get(user_name=customer)
+    preid=models.UserRoom.objects.get(user_name=precus,room=preroom)
     preid.schedulingtimes=preid.schedulingtimes+1
     schedulingtimes=preid.schedulingtimes
 
