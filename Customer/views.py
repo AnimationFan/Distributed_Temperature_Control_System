@@ -48,6 +48,7 @@ def welcome(request,username):
         if var["RoomNum"]==precus.room:
               lastone=var
     precus.currenttemp=lastone['Temp']
+    precus.currenttemp=round(precus.currenttemp,1)
     precus.On=lastone['On']
     if precus.On==True:
         precus.On="开"
@@ -105,6 +106,9 @@ def getAccount(request):
     for var in getlist:
       totalcost=totalcost+var.price
     totalcost=totalcost+controller.getAccount(precus.room,precus.id)
+    if controller.getAccount(precus.room,precus.id)==-1:
+        totalcost=totalcost+1
+    totalcost=round(totalcost,1)
     totalcost=str(totalcost)
     return HttpResponse(totalcost)
     #return render_to_response('Account.html',{'cost':totalcost})

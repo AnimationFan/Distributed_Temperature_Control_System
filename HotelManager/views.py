@@ -76,7 +76,7 @@ def getReport(request):
     #到达温度次数
     seacus=models.User.objects.filter(user_name=customer)
     if seacus.count()==0:
-        return HttpResponse(customer)
+        return HttpResponse("查找不能为空")
     precus=seacus.get(user_name=customer)
     searoom = models.AirC.objects.filter(room_num=room)
     if searoom.count() == 0:
@@ -136,6 +136,9 @@ def getReport(request):
     for var in getlist:
       totalcost = totalcost + var.price
     totalcost = totalcost + controller.getAccount(customer, room)
+    if controller.getAccount(customer, room)==-1:
+        totalcost=totalcost+1
+    totalcost = round(totalcost,1)
 
     return render_to_response('Report.html',{'runningtimes': runningtimes,"targettem":targettem,'targetwind':targetwind,"schedulingtimes":schedulingtimes,"reachtemtimes":reachtemtimes,"notesnum":notesnum,"totalcost":totalcost})
 
