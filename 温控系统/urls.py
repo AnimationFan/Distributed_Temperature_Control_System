@@ -11,6 +11,7 @@ urlpatterns=[
     path('setPassWord/', views.setPassWord),
     path('writesession/', views.writesession),
     path('readsession/', views.readsession),
+    path('decoratortest/',views.test_decoratort),
     path(r'', views.welcome),
 
 ]

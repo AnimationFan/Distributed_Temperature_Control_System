@@ -75,9 +75,16 @@ def welcome(request):
     return render(request, 'login.html')
 
 def writesession(request):
-    SessionCheck.writeSession(request,"1002","1003","F")
+    SessionCheck.writeSession(request,"1004","1004","C")
     return HttpResponse("写入session成功")
 
 def readsession(request):
     result=SessionCheck.readSession(request)
     return HttpResponse(result["user_name"]+result["password"]+result["type"])
+
+def test_decoratort(request):
+    result= SessionCheck.checkSession(request)
+    if result:
+        return  HttpResponse("Success")
+    else:
+        return HttpResponse("Faile")
