@@ -27,6 +27,8 @@ class DefaultConfig:
         #设定处理者数量
         self.ProducerNum=0;
 
+        #设定
+
 
 class ConfigReader(xml.sax.ContentHandler):
     def __init__(self, defaultconfig: DefaultConfig):

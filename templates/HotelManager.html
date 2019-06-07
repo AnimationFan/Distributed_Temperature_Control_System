@@ -133,7 +133,23 @@
 </div>
 
 <div class="wrap" id="wrap">
-	<div class="logGet">
+    <div style="display: inline-block;position: absolute;top: 10%;left:4%;min-height: 900px;min-width: 500px;background: white">
+        <table style="width:100%;text-align: center;font-size: 30px;border-collapse: collapse;">
+            <tr style="border-bottom:  black solid 2px">
+                <td>用户ID</td>
+                <td>房间号</td>
+            </tr>
+            {% for a in list %}
+                <tr>
+                    <td>{{ a.customer }}</td>
+                    <td>{{ a.room }}</td>
+                </tr>
+
+            {% endfor %}
+
+        </table>
+    </div>
+	<div style="display: inline-block" class="logGet">
 			<!-- 头部提示信息 -->
 			<div class="logD logDtip">
 				<p class="p1">亲爱的：经理，欢迎光临</p>
@@ -180,9 +196,10 @@
 			</div>
 			</form>
             <div class="logC">
-				<a href="login.html" target="_self"><button>退  出  登  陆</button></a>
+				<a href="../" target="_self"><button>退  出  登  陆</button></a>
 			</div>
 		</div>
+
 </div>
 
 <div class="footer" id="foot">

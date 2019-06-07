@@ -10,7 +10,7 @@
 	padding: 0;
 }
 #wrap {
-	height: 1000px;
+	min-height: 1000px;
 	width: 100;
 	background-image: url({% static "1.jpg"%});
 	background-repeat: no-repeat;
@@ -31,14 +31,14 @@
 	position: relative;
 }
 #wrap .logGet {
-	height: 950px;
+	min-height: 950px;
 	width: 800px;
 	position: absolute;
 	background-color: #FFFFFF;
 	top: 3%;
 	right: 4%;
 }
-.logC a button {
+.logC  button {
 	width: 100%;
 	height: 45px;
 	background-color: #ee7700;
@@ -151,26 +151,32 @@
 				<p class="p1">亲爱的：<a>{{ID}}</a>用户，欢迎光临</p>
 			</div>
             <div class="logD logDtip">
-				<p class="p1">当前室温：<a>{{currenttemp}}</a>当前空调状态：<a>{{On}}</a>当前预期温度：<a>{{targettemp}}</a>当前预期风速：<a>{{targetwind}}</a></p>
+                <p class="p1">
+                    当前室温：{{currenttemp}}<br>
+                    当前空调状态：{{On}}<br>
+                    当前预期温度：{{targettemp}}<br>
+                    当前预期风速：{{targetwind}}
+                </p>
 			</div>
             <!-- 输入框 -->
             <div class="logC">
-                <a href="../TurnOn" target="_self" type="button" class="btn btn-success pull-right">打开空调</a>
+                <a  href="../TurnOn" target="_self" type="button" class="logC"><button>打开空调</button></a>
 			</div>
+
+
 		    <form name="info1" action="/Customer/setTemp/" method="post">
                 {% csrf_token %}
-                <input type="radio" name="radiomode" value="tocold" checked="checked">制冷
-                <input type="radio" name="radiomode" value="tohot">制热
-		    <div class="lgD">
-				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="temp" value="" oninput="if(value>36)value=36;if(value<16)value=16"
-					placeholder="输入目标温度（制冷：16-31，制热：21-36）" />
-			</div>
-			<div class="logC">
-				<a><button type="submit" formmethod="post"  onclick="logconfir1()">确认提交目标温度</button></a>
-			</div>
-				</form>
-				<form name="info2" action="/Customer/setWind/" method="post" >
+		        <div class="lgD">
+				    <img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
+				    <input id="input_temp" type="number" name="temp" value=""  placeholder="输入目标温度（制冷：{{ min_in_cold}}-{{ max_in_cold }}，制热：{{ min_in_hot }}-{{ max_in_hot }}）" />
+			    </div>
+                <div class="logC">
+				    <button  type="submit">确认提交目标温度</button>
+                </div>
+            </form>
+
+
+            <form name="info2" action="/Customer/setWind/" method="post" >
                     {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
@@ -178,15 +184,14 @@
 					placeholder="输入预期风速（1：低速 2：中速 3：高速）" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post"  onclick="logconfir2()">确认提交预期风速</button></a>
+				<a><button   onclick="logconfir2()">确认提交预期风速</button></a>
 			</div>
 			</form>
 			<div class="logC">
-                <a href="../getAccount" target="_self" type="button" class="btn btn-success pull-right">计费查询</a>
-                <a><button onclick="tankuang()">计  费  查  询</button></a>
+                <a href="../getAccount" target="_self" type="button" class="btn btn-success pull-right"><button>计费查询</button></a>
 			</div>
            <div class="logC">
-				<a href="../TurnOff" target="_self" type="button" class="btn btn-success pull-right">关闭空调</a>
+               <a href="../TurnOff" target="_self" type="button" class="btn btn-success pull-right"><button>关闭空调</button></a>
 			</div>
             <div class="logC">
 				<a href="../../" target="_self"><button>退  出  登  陆</button></a>
@@ -214,6 +219,17 @@
 </div>
 
 <script>
+    var modle="{{ modle }}";
+    var current_temp={{ currenttemp}}
+    var target_temp={{ targettemp }}
+    if(modle=="Cold" )
+        if(current_temp<target_temp)
+            window.location.href("../TurnOff");
+    if(modle=="Hot")
+        if(current_temp>target_temp)
+            window.location.href("../TurnOff")
+
+
 function logconfir1()
 {
      var aa=document.forms['info1'];
@@ -234,110 +250,33 @@ function logconfir2()
          alert('风速不能为空');
       }
 }
-</script>
-
-<!--
-<script>
-	url_turn_on=""
-	url_turn_off=""
-	url_get_state=""
-	url_set_state=""
-	temp=0;
 
 
-
-	timer=null
-
-	function turn_on(){
-		var formdata=new FormData();
-		$.ajax({
-		type:"POST",
-		dataType:"json",
-		dataformdata,
-		url:url_turn_on,
-		contentType:false,
-		processData:false,
-		success:function(result){
-			//根据返回的结果，修改dom
-			/*例如：
-			temp=document.getelementById("temp");
-			temp.value=result.temp
-			wind=...
-			*/
-
-			//设置定时器
-			timer=setTimeout(checkState,60000)
-
-
-		},
-		error:function(){
-			alter("启动失败")
-		}
-	})
-	}
-
-	function get_state(){
-		var formdata=new FormData();
-		$.ajax({
-		type:"POST",
-		dataType:"json",
-		data:formdata,
-		url:url_get_state,
-		contentType:false,
-		processData:false,
-		success:function(result){
-			//根据返回的结果，修改dom
-			/*例如：
-			temp=document.getelementById("temp");
-			temp.value=result.temp
-			wind=...
-			*/
-			/*
-			if
-			*/
-		},
-		error:function(){
-			alter("启动失败")
-		}
-	})
-	}
-</script>
-	var last_time = (new Date()).getTime();
-    var current_time = (new Date()).getTime();
-    function clickme(){
-        current_time = (new Date()).getTime();
-        if(current_time - last_time >= 1000){
-
-        }
-        last_time = (new Date()).getTime();
-    }
--->
-<script>
-    function turn_off_kongtiao(){
-    	 $.post("/Customer/TurnOff/",{},function(request){
-
-		  });
-    }
-    function turn_on_kongtiao(){
-    	 $.post("/Customer/TurnOn/",{},function(request){
-
-		  });
-    }
 	setInterval(function(){
 	    var currenttemp = {{currenttemp}};
 	    var targettemp = {{targettemp}};
 	    if (currenttemp>=targettemp){
 	    	turn_off_kongtiao();
 	    }
-		window.location.href = "'/Customer/cus/{{ ID }}";
+		window.location.reload();
+	}, 60000);
 
-	}, 1000);
-	function tankuang(){
-		$.post("/Customer/getAccount/",{},function(request){
-			alert(result["cost"]);
-		  });
-	}
-
+    function check_input_temp() {
+        target_temp=document.getElementById("input_temp").valueOf();
+        if(modle=="Cold"){
+            if(target_temp<{{ min_in_cold }}||target_temp>{{ max_in_cold }}){
+                alert("请确定温度范围")
+                return false;
+            }
+        }
+        else {
+            if(target_temp<{{ min_in_hot }}||target_temp>{{ max_in_hot }}){
+                alert("请确定温度范围")
+                return false;
+            }
+        }
+        return true;
+    }
 </script>
 
 </body>

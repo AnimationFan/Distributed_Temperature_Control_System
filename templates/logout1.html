@@ -142,18 +142,18 @@
 				<p class="p1">注销用户信息</p>
 			</div>
 			<!-- 输入框 -->
-		<form name="info" action="/Front/Logout" method="post">
+		<form name="info" action="/Front/logout" method="get">
 			<div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="roomId" value=""
 					placeholder="房间号：" />
 			</div>
 			<div class="logC">
-				<a><button type="submit" formmethod="post"  onclick="logconfir()">确 认 注 销</button></a>
+				<a><button type="submit" formmethod="get"  onclick="logconfir()">确 认 注 销</button></a>
 			</div>
 			</form>
 		<div class="logC">
-				<a href="Front.html" target="_self"><button>返  回</button></a>
+				<a href="../" target="_self"><button>返  回</button></a>
 			</div>
 		</div>
 </div>

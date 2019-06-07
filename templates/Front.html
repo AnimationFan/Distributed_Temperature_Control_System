@@ -140,12 +140,12 @@
 			</div>
             <!-- 输入框 -->
             <div class="logC">
-				<a href="login1.html" target="_self"><button>录入用户信息</button></a>
+				<a href="/Front/viewlogin" target="_self"><button>录入用户信息</button></a>
 			</div>
             <div class="logC">
-				<a href="logout1.html" target="_self"><button>注销用户信息</button></a>
+				<a href="/Front/viewlogout" target="_self"><button>注销用户信息</button></a>
 			</div>
-		    <form name="info" action="/Front/getAccount" method="get">
+		    <form name="info" action="/Front/getAccount/" method="get">
 		    <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="roomId" value=""
@@ -157,7 +157,7 @@
 			</form>
 
             <div class="logC">
-				<a href="login.html" target="_self"><button>退  出  登  陆</button></a>
+				<a href="../" target="_self"><button>退  出  登  陆</button></a>
 			</div>
 	</div>
 </div>

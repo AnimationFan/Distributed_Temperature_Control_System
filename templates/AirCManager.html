@@ -11,7 +11,7 @@
 	padding: 0;
 }
 #wrap {
-	height: 800px;
+	min-height: 800px;
 	width: 100;
 	background-image: url({% static "1.jpg"%});
 	background-repeat: no-repeat;
@@ -32,14 +32,14 @@
 	position: relative;
 }
 #wrap .logGet {
-	height: 700px;
+	min-height: 700px;
 	width: 800px;
 	position: absolute;
 	background-color: #FFFFFF;
 	top: 10%;
 	right: 4%;
 }
-.logC a button {
+.logC  button {
 	width: 100%;
 	height: 45px;
 	background-color: #ee7700;
@@ -134,19 +134,56 @@
 </div>
 
 <div class="wrap" id="wrap">
-	<div class="logGet">
+    <div style="display: inline-block;position: absolute;top: 10%;left:4%;min-height: 900px;min-width: 500px;background: white;m">
+        <table style="width:100%;text-align: center;font-size: 30px;border-collapse: collapse;">
+            <tr style="border-bottom:  black solid 2px">
+                <td>房间号</td>
+                <td>开/ 关</td>
+                <td>温 度 </td>
+                <td>风/速/</td>
+            </tr>
+            {% for airc_state in list %}
+                <tr>
+                    <td>{{ airc_state.RoomNum }}</td>
+                    <td>{{ airc_state.On }}</td>
+                    <td>{{ airc_state.Temp }}</td>
+                    <td>{{ airc_state.Wind }}</td>
+
+                </tr>
+
+            {% endfor %}
+        </table>
+        <div style="position:absolute;top:60%">
+            当前模式：{{ config.DefaultModle }}<br>
+            默认温度：{{ config.DefaultTemp }}<br>
+            服务对象数:{{ config.ProducerNum }}<br>
+            价格系数：{{ config.Price }}<br>
+        </div>
+    </div>
+	<div class="logGet" style="display: inline-block">
 			<!-- 头部提示信息 -->
 			<div class="logD logDtip">
 				<p class="p1">亲爱的：管理员，欢迎光临</p>
 			</div>
             <!-- 输入框 -->
 		    <div class="logC">
-                <button><a href="./TurnOn" target="_self" type="button" class="btn btn-success pull-right">打开中央空调</a></button>
-				<a><button onclick="turn_on_kongtiao()">打开空调</button></a>
+                <form method="post" action="./TurnOn/">
+                    {% csrf_token %}
+                    <!--制冷制热-->
+                    <input type="radio" name="modle" value="Cold">制冷<br>
+                    <input type="radio" name="modle" value="Hot">制热<br>
+                    <!--服务对象数量-->
+                    <input type="text" name="producer_num" placeholder="请输入服务者数量">
+                    <!--缺省温度-->
+                    <input type="text" name="default_temp" placeholder="请输入默认温度">
+                    <!--默认价格-->
+                    <input type="text" name="default_price" placeholder="请输入电费默认价格">
+                    <button type="submit" >启动系统</button>
+                </form>
+
 			</div>
 		    <div class="logC">
-                <button><a href="./TurnOff" target="_self" type="button" class="btn btn-success pull-right">关闭中央空调</a></button>
-				<a><button onclick="turn_off_kongtiao()">关闭空调</button></a>
+                <a href="./TurnOff" target="_self" type="button" class="btn btn-success pull-right"><button>关闭中央空调</button></a>
 			</div>
             {% if result1 is 'error' %}
 		    <script>alert("添加房间失败!")</script>
@@ -177,7 +214,7 @@
 			</div>
 			</form>
             <div class="logC">
-				<a href="login.html" target="_self"><button>退  出  登  陆</button></a>
+				<a href="../" target="_self"><button>退  出  登  陆</button></a>
 			</div>
 		</div>
 </div>
@@ -197,34 +234,7 @@
 	</div>
   </div>
 </div>
-<div class="wrapper">
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <hr>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th class="text-left" style="width:10%">房间号</th>
-                        <th class="text-left" style="width:10%">顾客姓名</th>
-                        <th class="text-left" style="width:10%">空调状态</th>
-                    </tr>
-                    </thead>
-                <tbody>
 
-                {% for item in list %}
-                <tr>
-                    <td>{{ item.room.room_num  }}</td>
-                    <td>{{ item.customer }}</td>
-                    <td>{{ item.On }}</td>
-                </tr>
-                 {% endfor %}
-                </tbody>
-
-                </table> 
-
-            </div>
-        </div>
-    </div>
 <script>
 function logconfir1()
 {

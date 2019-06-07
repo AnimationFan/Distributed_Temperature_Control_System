@@ -141,7 +141,8 @@
 		    <script>alert("注册失败!")</script>
 		    {% endif %}
 			<!-- 输入框 -->
-		    <form name="info" action="/Front/Login" method="get">
+		    <form name="info" action="/Front/login/" method="get">
+                {% csrf_token %}
 			<div class="lgD">
 				<img src="{% static "img/user.png" %}" width="20" height="20" alt=""/>
 				<input type="text" name="customerId" value=""
@@ -149,20 +150,20 @@
 			</div>
 			<div class="lgD">
 				<img src="{% static "img/lock.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="password" value=""
+				<input type="text" name="password" value=""
 					placeholder="密码：" />
 			</div>
             <div class="lgD">
 				<img src="{% static "img/room.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="roomId" value=""
+				<input type="text" name="roomId" value=""
 					placeholder="房间号：" />
 			</div>
 				<div class="logC">
-				<a><button type="submit" formmethod="post"  onclick="logconfir()">确  认</button></a>
+				<a><button type="submit" formmethod="get"  onclick="logconfir()">确  认</button></a>
 			</div>
 			</form>
 		    <div class="logC">
-				<a href="Front.html" target="_self"><button>返  回</button></a>
+				<a href="/Front/" target="_self"><button>返  回</button></a>
 			</div>
 		</div>
 </div>

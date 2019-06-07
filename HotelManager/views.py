@@ -29,8 +29,8 @@ def welcome(request):
     for var in getlist:
       seacus=models.UserRoom.objects.all()
       for var2 in seacus:
-          if var2.room.room_num==var['RoomNum']:
-              precus=var2.user_name.user_name
+          if var2.room==var['RoomNum']:
+              precus=var2.user_name
               a = {"customer": precus, "room": var['RoomNum']}
               showlist.append(a)
     return render(request,'HotelManager.html',{"list":showlist,'temp':prema.pretemp,'charge':prema.precharge})
@@ -80,15 +80,15 @@ def getReport(request):
     precus=seacus.get(user_name=customer)
     searoom = models.AirC.objects.filter(room_num=room)
     if searoom.count() == 0:
-        return HttpResponse("查找失败2")
+        return HttpResponse("房间不存在")
     preroom = searoom.get(room_num=room)
-    seauserroom=models.UserRoom.objects.filter(user_name=precus,room=preroom)
+    seauserroom=models.UserRoom.objects.filter(user_name=customer,room=room)
 
     getlist = models.UseRecord.objects.filter(user_name=customer,room_num=room)
     length=len(getlist)
 
     if seauserroom.count()==0:
-        return HttpResponse("查找失败3")
+        return HttpResponse("无居住记录")
     pre = seauserroom.get(user_name=precus)
 
     #到达目标温度次数
@@ -105,26 +105,37 @@ def getReport(request):
       alltem.append(getlist[i].temp)
       allwind.append(getlist[i].wind)
 
-       # 记录最大的次数的温度
+
+       # 记录最大的时间的温度
     d = {}
+    current_maxtime=0             #初始化计算最长时间
     for i in alltem:
       if i not in d:
-        count = alltem.count(i)
+        count=0
+        for var in getlist:
+          if var.temp==i:
+              count = count+(var.end_time-var.begin_time).seconds          #计算当前目标温度经过时间
         d[i] = count
-      if count > d.get(targettem, 0):
+      if count > current_maxtime:
         targettem = i
+        current_maxtime=count
 
-       # 记录最大的次数的风速
+       # 记录最大的时间的风速
     e = {}
+    current_maxtime = 0  # 初始化计算最长时间
     for i in allwind:
-      if i not in e:
-        count = allwind.count(i)
-        e[i] = count
-      if count > d.get(targetwind, 0):
-        targetwind = i
+        if i not in d:
+            count = 0
+            for var in getlist:
+                if var.wind == i:
+                    count = count + (var.end_time - var.begin_time).seconds  # 计算当前目标温度经过时间
+            d[i] = count
+        if count > current_maxtime:
+            targetwind = i
+            current_maxtime = count
 
        #记录调度次数
-    preid=models.UserRoom.objects.get(user_name=precus,room=preroom)
+    preid=models.UserRoom.objects.get(user_name=customer,room=room)
     preid.schedulingtimes=preid.schedulingtimes+1
     schedulingtimes=preid.schedulingtimes
 

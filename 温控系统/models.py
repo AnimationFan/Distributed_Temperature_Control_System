@@ -17,8 +17,8 @@ class AirC(models.Model):
 
 
 class UserRoom(models.Model):
-    user_name=models.OneToOneField(User,on_delete=models.CASCADE,blank=False)
-    room=models.OneToOneField(AirC,on_delete=models.CASCADE,blank=False)
+    user_name=models.CharField(max_length=30,blank=False)
+    room=models.CharField(max_length=30,blank=False)
     schedulingtimes = models.IntegerField(blank=False,default=0)
     reachtimes=models.IntegerField(blank=False,default=0)
 
@@ -32,8 +32,8 @@ class UseRecord(models.Model):
 
     begin_time=models.DateTimeField(auto_now=False,auto_now_add=False)
     end_time=models.DateTimeField(auto_now=False,auto_now_add=False)
-    user_name=models.OneToOneField(User,on_delete=models.CASCADE,blank=False)
-    room_num=models.OneToOneField(AirC,on_delete=models.CASCADE,blank=False)
+    user_name=models.CharField(max_length=30,blank=False)
+    room_num=models.CharField(max_length=30,blank=False)
     temp=models.IntegerField(blank=False)
     wind=models.CharField(max_length=5,choices=WIND_SIZE)
     price=models.FloatField(blank=False)

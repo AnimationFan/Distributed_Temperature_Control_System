@@ -11,8 +11,7 @@ from UserDefine.ConfigReader import config_info,DefaultConfig
 
 # -*- coding: UTF-8 -*-
 
-Default=DefaultConfig()
-
+Default=config_info
 
 class Customer:
     id=''
@@ -30,18 +29,15 @@ precus=Customer()
 
 #@login_required
 def inita(request):
-    user=models.User.objects.get(user_name="1004")
-    room=models.AirC.objects.get(room_num="1001")
-    models.UserRoom.objects.create(user_name=user,room=room)
+    models.UserRoom.objects.create(user_name="1004",room="1001")
     return HttpResponse('success')
 
 #@login_required
 def welcome(request,username):
     precus.id = username
     precus.id=str(precus.id)
-    seacus=models.User.objects.get(user_name=username)
-    pre = models.UserRoom.objects.get(user_name=seacus)
-    preroom=pre.room.room_num
+    pre = models.UserRoom.objects.get(user_name=username)
+    preroom=pre.room
     precus.room=preroom
     last = controller.getStates();
     for var in last:
@@ -54,10 +50,15 @@ def welcome(request,username):
         precus.On="开"
     else:
         precus.On="关"
-    return render(request,'Customer.html',{'ID':precus.id,'On':precus.On,'targettemp':precus.targettemp,'currenttemp':precus.currenttemp,'targetwind':precus.targetwind})
+    return render(request,'Customer.html',
+                  {'ID':precus.id,'On':precus.On,'targettemp':precus.targettemp,
+                   'currenttemp':precus.currenttemp,'targetwind':precus.targetwind,
+                   'modle':config_info.DefaultModle,'max_in_cold':config_info.ColdMaxTemp,
+                   'min_in_cold':config_info.ColdMinTemp,'max_in_hot':config_info.HotMaxTemp,
+                   'min_in_hot':config_info.HotMinTemp})
 
     #开启空调
-#@login_required
+
 def TurnOn(request):
     global controller
     controller.turnOnAirC(precus.id,precus.room)
@@ -100,8 +101,8 @@ def setWind(request):
 
 #@login_required
 def getAccount(request):
-    global controller
-    getlist=models.UseRecord.objects.filter(room_num=precus.room)
+    global controller,precus
+    getlist=models.UseRecord.objects.filter(user_name=precus.id,room_num=precus.room)
     totalcost=0.0
     for var in getlist:
       totalcost=totalcost+var.price
@@ -115,8 +116,7 @@ def getAccount(request):
 
 #@login_required
 def TurnOff(request):
-   global controller
-   controller.turnOffAirC(precus.id,precus.room)
+   result=controller.turnOffAirC(precus.id,precus.room)
    url = '/Customer/cus/' + precus.id
    return HttpResponseRedirect(url)
 

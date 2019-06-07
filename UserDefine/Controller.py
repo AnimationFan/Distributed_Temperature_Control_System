@@ -239,12 +239,13 @@ class AirCState(threading.Thread):
         endtime=datetime.datetime.now()
         record=温控系统.models.UseRecord(begin_time=self.begintime,
                           end_time=endtime,
-                          user_name=温控系统.models.User.objects.get(user_name=self.user),
-                          room_num=温控系统.models.AirC.objects.get(room_num=self.roomNum),
+                          user_name=self.user,
+                          room_num=self.roomNum,
                           wind=self.wind,
                           temp=self.targetTemp,
                           price=self.getPrice()
                           )
+        record.save()
         print(self.begintime,endtime,self.user,self.roomNum,self.wind,self.targetTemp,self.getPrice())
         self.begintime=None
 
@@ -310,19 +311,24 @@ class Controller(object):
             cls.__instance=object.__new__(cls)
         return cls.__instance
 
-    def __init__(self,config_info:DefaultConfig,airCs:list):
+    def __init__(self,config_info:DefaultConfig):
         self.config_info=config_info#初始化状态信息
-        self.aircList=[]#初始化空调信息队列,并启动
+        self.on=False
+
+
+    def start(self,config_info:DefaultConfig,airCs:list):
+        self.config_info=config_info
+        self.on=True
+        self.aircList = []  # 初始化空调信息队列,并启动
         for airc in airCs:
-            real_air=AirCState(airc,self.config_info)
+            real_air = AirCState(airc, self.config_info)
             real_air.start()
             self.aircList.append(real_air)
         self.taskList = TaskList()
-        i=0
-        while i<self.config_info.ProducerNum:
-            self.taskList.appendProducer(Producer(self.taskList,self.aircList,i))
-            i=i+1
-
+        i = 0
+        while i < self.config_info.ProducerNum:
+            self.taskList.appendProducer(Producer(self.taskList, self.aircList, i))
+            i = i + 1
 
     #信息查询类函数->允许立即返回
     def getStates(self):
@@ -386,9 +392,10 @@ class Controller(object):
         target_airc=None
         for airc in self.aircList:
             if airc.roomNum==roomNum:
-                target_airc=airc.roomNum
+                target_airc=airc
         if target_airc:
             self.turnOffAirC(roomNum=roomNum,userId="")
+            self.aircList.remove(target_airc)
             target_airc=None
             if 温控系统.models.AirC.objects.filter(room_num=roomNum).count() ==1:
                 target_airc=温控系统.models.AirC.objects.get(room_num=roomNum)
@@ -398,7 +405,6 @@ class Controller(object):
         else:
             return False
 
-airclist=[]
-for airc in 温控系统.models.AirC.objects.all():
-    airclist.append(airc.room_num)
-controller=Controller(config_info,airclist)
+
+controller=Controller(config_info)
+
