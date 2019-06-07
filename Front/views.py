@@ -83,7 +83,8 @@ def getAccount(request):
             showlist.append(a)
             totalcost=totalcost+var.price
         length=len(record)
-        if showlist[length-1]['cost']==-1:
+        if length>0:
+          if showlist[length-1]['cost']==-1:
             showlist[length-1]['cost']=controller.getAccount(roomid,user_name)
         totalcost=round(totalcost,1)
     else:
@@ -113,6 +114,7 @@ def logout(request):
             user = userroom[0].user_name
             userroom.delete();
             models.User.objects.filter(user_name=user).delete()
+            models.UseRecord.objects.filter(user_name=user).delete()
         message = '注销成功。'
     else:
         message = '房间不存在。'
