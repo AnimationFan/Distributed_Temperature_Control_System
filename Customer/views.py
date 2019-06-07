@@ -118,6 +118,7 @@ def setTemp(request):
     w = int(request.POST.get('target_wind'))
     precus.targettemp = t
     precus.targetwind = w
+    request.session["targettemp"]=t
     result=controller.setAirCState(precus.room,t,w,precus.id)
     change_session(request)
     return HttpResponse(json.dumps({"result":result}),content_type="Application/json")
