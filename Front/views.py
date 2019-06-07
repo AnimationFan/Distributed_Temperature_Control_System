@@ -16,6 +16,8 @@ def welcome(request):
     session_check=request.session.get("username")
     if not session_check:
         return HttpResponseRedirect("../")
+    if session_check!='1003':
+        return HttpResponseRedirect("../")
     showlist=[]
     seacus=models.UserRoom.objects.all()
     for var2 in seacus:
@@ -28,12 +30,16 @@ def viewlogin(request):
     session_check=request.session.get("username")
     if not session_check:
         return HttpResponseRedirect("../../")
+    if session_check!='1003':
+        return HttpResponseRedirect("../")
     return render(request, 'login1.html')
 
 #@login_required
 def login(request):
     session_check=request.session.get("username")
     if not session_check:
+        return HttpResponseRedirect("../../")
+    if session_check!='1003':
         return HttpResponseRedirect("../../")
     user = request.GET['customerId']
     pwd = request.GET['password']
@@ -57,6 +63,8 @@ def login(request):
 def getAccount(request):
     session_check=request.session.get("username")
     if not session_check:
+        return HttpResponseRedirect("../../")
+    if session_check!='1003':
         return HttpResponseRedirect("../../")
     global controller
     roomid = request.GET['roomId']
@@ -87,12 +95,16 @@ def viewlogout(request):
     session_check=request.session.get("username")
     if not session_check:
         return HttpResponseRedirect("../../")
+    if session_check!='1003':
+        return HttpResponseRedirect("../../")
     return render(request, 'logout1.html')
 
 #@login_required
 def logout(request):
     session_check=request.session.get("username")
     if not session_check:
+        return HttpResponseRedirect("../../")
+    if session_check!='1003':
         return HttpResponseRedirect("../../")
     roomid = request.GET["roomId"]
     if roomid in models.AirC.objects.all().values_list('room_num', flat=True):
@@ -109,6 +121,8 @@ def logout(request):
 def logout2(request):
     session_check=request.session.get("username")
     if not session_check:
+        return HttpResponseRedirect("../../")
+    if session_check!='1003':
         return HttpResponseRedirect("../../")
     del request.session["username"]  # 删除session
     return HttpResponseRedirect('../../')

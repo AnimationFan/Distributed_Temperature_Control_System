@@ -58,8 +58,9 @@ def inita(request):
 
 #@login_required
 def welcome(request,username):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")
@@ -90,8 +91,9 @@ def welcome(request,username):
     #开启空调
 
 def TurnOn(request):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")
@@ -105,8 +107,9 @@ def TurnOn(request):
 
 @csrf_exempt
 def setTemp(request):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")
@@ -122,8 +125,9 @@ def setTemp(request):
     #设置风速
 #@login_required
 def setWind(request):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")
@@ -141,8 +145,9 @@ def setWind(request):
 
 #@login_required
 def getAccount(request):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")
@@ -161,21 +166,23 @@ def getAccount(request):
 
 #@login_required
 def TurnOff(request):
-   session_check = request.session.get("username")
-   if session_check:
+    session_check1 = request.session.get("username")
+    session_check2 = request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
-   else:
+    else:
         return HttpResponseRedirect("../../")
-   result=controller.turnOffAirC(precus.id,precus.room)
-   url = '/Customer/cus/' + precus.id
-   change_session(request)
-   return HttpResponseRedirect(url)
+    result=controller.turnOffAirC(precus.id,precus.room)
+    url = '/Customer/cus/' + precus.id
+    change_session(request)
+    return HttpResponseRedirect(url)
 
 
 
 def get_temp(request):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")
@@ -197,8 +204,9 @@ def get_temp(request):
     return HttpResponse(json.dumps(result),content_type="application/json")
 
 def get_On(request):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")
@@ -210,8 +218,9 @@ def get_On(request):
     return HttpResponse(On)
 
 def logout(request):
-    session_check=request.session.get("username")
-    if session_check:
+    session_check1=request.session.get("username")
+    session_check2=request.session.get("room")
+    if session_check1 and session_check2:
         init_session(request)
     else:
         return HttpResponseRedirect("../../")

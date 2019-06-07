@@ -25,6 +25,8 @@ def welcome(request):
     session_check=request.session.get("username")
     if not session_check:
         return HttpResponseRedirect("../")
+    if session_check!='1001':
+        return HttpResponseRedirect("../")
     global controller,prema
     getlist = controller.getStates()
     showlist=[]
@@ -46,6 +48,8 @@ def setCharge(request):
     session_check=request.session.get("username")
     if not session_check:
         return HttpResponseRedirect("../../")
+    if session_check!='1001':
+        return HttpResponseRedirect("../../")
     global controller,prema
     newcharge = request.POST.get('charge')
     newtemp = config_info.DefaultTemp
@@ -59,6 +63,8 @@ def setCharge(request):
 def setTemp(request):
     session_check=request.session.get("username")
     if not session_check:
+        return HttpResponseRedirect("../../")
+    if session_check!='1001':
         return HttpResponseRedirect("../../")
     global controller,prema
     newtemp = request.POST.get('temp')
@@ -74,6 +80,8 @@ def setTemp(request):
 def getReport(request):
     session_check=request.session.get("username")
     if not session_check:
+        return HttpResponseRedirect("../../")
+    if session_check!='1001':
         return HttpResponseRedirect("../../")
     global controller,prema
     customer = request.POST.get('customerID')
@@ -169,6 +177,8 @@ def getReport(request):
 def logout(request):
     session_check=request.session.get("username")
     if not session_check:
+        return HttpResponseRedirect("../../")
+    if session_check!='1001':
         return HttpResponseRedirect("../../")
     del request.session["username"]  # 删除session
     return HttpResponseRedirect('../../')
