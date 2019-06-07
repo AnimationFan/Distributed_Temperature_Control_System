@@ -158,6 +158,7 @@ def getReport(request):
        #记录调度次数
     preid=models.UserRoom.objects.get(user_name=customer,room=room)
     preid.schedulingtimes=preid.schedulingtimes+1
+    preid.save()
     schedulingtimes=preid.schedulingtimes
 
        #总记录数
