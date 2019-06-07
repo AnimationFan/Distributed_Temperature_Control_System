@@ -12,5 +12,6 @@ urlpatterns = [
     path('get_temp/',views.get_temp),
     path('get_On/',views.get_On),
     path('inita/',views.inita),
+    path('logout/',views.logout),
     path('cus/<username>', views.welcome),                 #需要顾客号(id)   #返回房间号(room:str)、目标温度(targettemp:int)、室温(currenttemp:int)、风速(wind:int)、开关与否(On:bool)
 ]

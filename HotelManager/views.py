@@ -10,12 +10,11 @@ from UserDefine.ConfigReader import config_info,DefaultConfig
 
 # -*- coding: UTF-8 -*-
 
-Default=DefaultConfig()
 
 class Manager:
 
-    pretemp=Default.DefaultTemp
-    precharge=Default.Price
+    pretemp=config_info.DefaultTemp
+    precharge=config_info.Price
     def __init__(self):
         pass
 
@@ -23,6 +22,9 @@ prema=Manager()
 
 #@login_required
 def welcome(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../")
     global controller,prema
     getlist = controller.getStates()
     showlist=[]
@@ -33,12 +35,17 @@ def welcome(request):
               precus=var2.user_name
               a = {"customer": precus, "room": var['RoomNum']}
               showlist.append(a)
+    prema.pretemp=config_info.DefaultTemp
+    prema.precharge=config_info.Price
     return render(request,'HotelManager.html',{"list":showlist,'temp':prema.pretemp,'charge':prema.precharge})
 
 
     #设置计费参数
 #@login_required
 def setCharge(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
     global controller,prema
     newcharge = request.POST.get('charge')
     newtemp = config_info.DefaultTemp
@@ -50,6 +57,9 @@ def setCharge(request):
 
 #@login_required
 def setTemp(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
     global controller,prema
     newtemp = request.POST.get('temp')
     newcharge = config_info.Price
@@ -62,6 +72,9 @@ def setTemp(request):
     #开启空调
 #@login_required
 def getReport(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
     global controller,prema
     customer = request.POST.get('customerID')
     room = request.POST.get('roomID')
@@ -89,7 +102,7 @@ def getReport(request):
 
     if seauserroom.count()==0:
         return HttpResponse("无居住记录")
-    pre = seauserroom.get(user_name=precus)
+    pre = seauserroom.get(user_name=customer)
 
     #到达目标温度次数
     reachtemtimes = pre.reachtimes
@@ -153,3 +166,9 @@ def getReport(request):
 
     return render_to_response('Report.html',{'runningtimes': runningtimes,"targettem":targettem,'targetwind':targetwind,"schedulingtimes":schedulingtimes,"reachtemtimes":reachtemtimes,"notesnum":notesnum,"totalcost":totalcost})
 
+def logout(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
+    del request.session["username"]  # 删除session
+    return HttpResponseRedirect('../../')

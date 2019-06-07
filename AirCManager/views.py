@@ -21,6 +21,9 @@ prema=AirCManager()
 
 #@login_required
 def welcome(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../")
     global prema
     if prema.p1==1:
         result1='success'
@@ -52,6 +55,9 @@ def welcome(request):
 
 
 def TurnOn(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
 
     config_info.DefaultTemp=float(request.POST["default_temp"])
     config_info.Price=float(request.POST["default_price"])
@@ -68,6 +74,9 @@ def TurnOn(request):
 
 #@login_required
 def turnOff(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
     global prema
     getlist=models.UserRoom.objects.all()
     for var in getlist:
@@ -76,6 +85,9 @@ def turnOff(request):
 
 #@login_required
 def delAirC(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
     global prema
     id=request.POST.get('room')
     if id=='':
@@ -96,6 +108,9 @@ def delAirC(request):
 
 #@login_required
 def addAirC(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
     global prema
     id = request.POST.get('room')
     if id=='':
@@ -108,3 +123,10 @@ def addAirC(request):
         controller.addAirC(roomNum=id)
     return HttpResponseRedirect("/AirCManager/")
 
+
+def logout(request):
+    session_check=request.session.get("username")
+    if not session_check:
+        return HttpResponseRedirect("../../")
+    del request.session["username"]  # 删除session
+    return HttpResponseRedirect("../")

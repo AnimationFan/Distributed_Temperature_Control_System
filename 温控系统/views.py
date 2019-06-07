@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from UserDefine.ConfigReader import config_info
-from 温控系统.models import User,AirC
+from 温控系统.models import User,AirC,UserRoom
 from UserDefine.Controller import controller
 from django.contrib import auth
 from UserDefine.SessionCheck import  SessionCheck
@@ -42,21 +42,30 @@ def login(request):
     if user.count()>0:
         preuser = user[0]
         if preuser.user_type == 'C':
+            request.session["username"]=username
+            search_state=UserRoom.objects.get(user_name=username)
+            request.session["room"]=search_state.room
+            request.session["currenttemp"]=config_info.DefaultTemp
+            request.session["targettemp"]=config_info.DefaultTemp
+            request.session["targetwind"]=1
+            request.session["On"]="关"
             url = '/Customer/cus/' + username
             return HttpResponseRedirect(url)
         elif preuser.user_type == 'F':
+            request.session["username"]=username
             return HttpResponseRedirect('/Front/')
         elif preuser.user_type == 'A':
+            request.session["username"]=username
             return HttpResponseRedirect('/AirCManager/')
         elif preuser.user_type == 'H':
+            request.session["username"]=username
             return HttpResponseRedirect('/HotelManager/')
-
     else:
       return HttpResponse('用户名或密码错误。')
 
 
 def logout(request):
-    auth.logout(request)
+    del request.session["username"]  # 删除session
     return HttpResponseRedirect('/login/')
 
 
@@ -87,4 +96,4 @@ def test_decoratort(request):
     if result:
         return  HttpResponse("Success")
     else:
-        return HttpResponse("Faile")
+        return HttpResponse("Fail")

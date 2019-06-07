@@ -334,7 +334,7 @@ class Controller(object):
     def getStates(self):
         result=[]
         for airc in self.aircList:
-            aircstate={"RoomNum":airc.roomNum,"On":airc.on,"Temp":airc.temp,"Wind":airc.wind,"User":airc.user,"Price":airc.getPrice()}
+            aircstate={"RoomNum":airc.roomNum,"On":airc.on,"TargetTemp":airc.targetTemp,"Temp":airc.temp,"Wind":airc.wind,"User":airc.user,"Price":airc.getPrice()}
             result.append(aircstate)
         return result
 
