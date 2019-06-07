@@ -74,10 +74,10 @@ def setTemp(request):
     t = int(t)
     mode = request.POST.get('mode')
     if mode=="tohot":
-        if t>36 or t<21:
+        if t>30 or t<26:
          return HttpResponse('制热模式温度输入错误')
     if mode=="tocold":
-        if t>31 or t<16:
+        if t>26 or t<18:
          return HttpResponse('制冷模式温度输入错误')
     precus.targettemp = t
     w=precus.targetwind
@@ -111,8 +111,7 @@ def getAccount(request):
         totalcost=totalcost+1
     totalcost=round(totalcost,1)
     totalcost=str(totalcost)
-    return HttpResponse(totalcost)
-    #return render_to_response('Account.html',{'cost':totalcost})
+    return render_to_response('customer_account.html',{'customer':precus.id,'room':precus.room,'cost':totalcost})
 
 #@login_required
 def TurnOff(request):
@@ -120,6 +119,33 @@ def TurnOff(request):
    url = '/Customer/cus/' + precus.id
    return HttpResponseRedirect(url)
 
+
+
+def get_temp(request):
+    last = controller.getStates();
+    for var in last:
+        if var["RoomNum"] == precus.room:
+            lastone = var
+    precus.currenttemp = lastone['Temp']
+    precus.currenttemp = round(precus.currenttemp, 1)
+    precus.On = lastone['On']
+    if precus.On == True:
+        precus.On = "开"
+    else:
+        precus.On = "关"
+
+    if request.method=='get':
+        currenttemp=request.GET('currenttemp')
+    currenttemp=precus.currenttemp
+    currenttemp=str(currenttemp)
+    return HttpResponse(currenttemp)
+
+def get_On(request):
+    global precus
+    if request.method=='get':
+        currenttemp=request.GET('On')
+    On=precus.On
+    return HttpResponse(On)
 
 
 

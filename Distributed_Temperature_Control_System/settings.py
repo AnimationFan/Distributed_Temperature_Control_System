@@ -82,9 +82,9 @@ WSGI_APPLICATION = 'Distributed_Temperature_Control_System.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Temp_Control_System',
-        'USER':'django_user',
-        'PASSWORD':'123456',
+        'NAME': 'temp_control_system',
+        'USER':'root',
+        'PASSWORD':'',
         'HOST':'localhost',
         'PORT':'3306'
     }
