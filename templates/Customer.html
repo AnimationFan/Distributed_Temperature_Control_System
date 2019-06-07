@@ -2,11 +2,8 @@
 <html lang="en">
 
 <head>
-<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.js"></script>
 
-</head>
-
-<head>
     <meta charset="UTF-8">
     <title>Customer</title>
 	{% load staticfiles %}
@@ -17,7 +14,7 @@
 }
 #wrap {
 	min-height: 1000px;
-	width: 100;
+	width: 100%;
 	background-image: url({% static "1.jpg"%});
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -25,13 +22,13 @@
 }
 #head {
 	height: 120px;
-	width: 100;
+	width: 100%;
 	background-color: #F4A460;
 	text-align: center;
 	position: relative;
 }
 #foot {
-	width: 100;
+	width: 100%;
 	height: 120px;
 	background-color: #CC9933;
 	position: relative;
@@ -144,7 +141,7 @@
 </style>
 </head>
 
-<body onload="repeat()">
+<body >
 <div class="header" id="head">
   <div class="title">314_G分布式温控系统</div>
 
@@ -160,8 +157,8 @@
                 <p class="p1">
                     当前室温： <span id='currenttemp'></span><br>
                     当前空调状态：<span id='On'></span><br>
-                    当前预期温度：{{targettemp}}<br>
-                    当前预期风速：{{targetwind}}
+                    当前预期温度：<span id="targettemp"></span><br>
+                    当前预期风速：<span id="targetwind"></span>
                 </p>
 			</div>
             <!-- 输入框 -->
@@ -176,23 +173,18 @@
 				    <img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
 				    <input id="input_temp" type="number" name="temp" value=""  placeholder="输入目标温度（制冷：{{ min_in_cold}}-{{ max_in_cold }}，制热：{{ min_in_hot }}-{{ max_in_hot }}）" />
 			    </div>
-                <div class="logC">
-				    <button  type="submit">确认提交目标温度</button>
-                </div>
             </form>
-
 
             <form name="info2" action="/Customer/setWind/" method="post" >
                     {% csrf_token %}
 		    <div class="lgD">
 				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
-				<input type="number" name="wind" value="" oninput="if(value>3)value=3;if(value<1)value=1"
-					placeholder="输入预期风速（1：低速 2：中速 3：高速）" />
+				<input id="input_wind" type="number" name="wind" value="" placeholder="输入预期风速（1：低速 2：中速 3：高速）" />
 			</div>
 			<div class="logC">
-				<a><button   onclick="logconfir2()">确认提交预期风速</button></a>
 			</div>
 			</form>
+            <div class="logC"><button   onclick="set_temp()">确认提交预期风速和温度</button></div>
 			<div class="logC">
                 <a href="../getAccount" target="_self" type="button" class="btn btn-success pull-right"><button>计费查询</button></a>
 			</div>
@@ -225,17 +217,90 @@
 </div>
 
 <script type="text/javascript">
+    var on="{{ On }}";
     var modle="{{ modle }}";
-    var current_temp={{ currenttemp }}
-    var target_temp={{ targettemp }}
-    if(modle=="Cold" )
-        if(current_temp<target_temp)
-            window.location.href("../TurnOff");
-    if(modle=="Hot")
-        if(current_temp>target_temp)
-            window.location.href("../TurnOff")
+    var current_temp={{ currenttemp }};
+    var target_temp={{ targettemp }};
+    var target_wind={{ targetwind }};
+    (function () {
+            if(on=="关")
+                target_wind=0;
+            document.getElementById("targettemp").innerText=target_temp;
+            document.getElementById("currenttemp").innerText=current_temp;
+            document.getElementById("On").innerText=on;
+            document.getElementById("targetwind").innerText=target_wind;
+            setInterval(function () {
+                $.get("../get_temp",
+                    function (result) {
+                        current_temp=result.current_temp;
+                        target_temp=result.target_temp;
+                        target_wind=result.wind;
+                        on=result.on;
+                        document.getElementById("targettemp").innerText=target_temp;
+                        document.getElementById("currenttemp").innerText=current_temp;
+                        document.getElementById("On").innerText=on;
+                        document.getElementById("targetwind").innerText=target_wind;
+                    });
+                if(modle=="Cold"){
+                    if(current_temp<target_temp){
+                        $.get("../TurnOff",function () {
+                    });
+                    }
+                }
+                else {
+                    if(current_temp>target_temp){
+                        $.get("../TurnOff",function () {
+                    });
+                    }
+                }
+            },1000)
+    })()
 
+function set_temp() {
+    var input_temp=parseFloat(document.getElementById("input_temp").value);
+    var input_wind=parseInt(document.getElementById("input_wind").value);
+    var check_temp=false;
+    var check_wind=false;
+    if(input_temp==NaN)
+        alert("温度输入类型错误");
+    else{
+        if(modle=="Cold"){
+            if (input_temp>{{ max_in_cold }}||input_temp<{{ min_in_cold }})
+                alert("请检查值范围")
+            else {
+                check_temp=true;
 
+            }
+        }else {
+            if (input_temp<{{ min_in_hot }}||input_temp>{{ max_in_hot }}){
+                alert("请检查值范围")
+            }else{
+                check_temp=true;
+
+            }
+        }
+    }
+    if(input_wind==NaN)
+        alert("风速输入错误")
+    else{
+        if(input_wind!=1 && input_wind!=2 && input_wind!=3){
+            alert("风速范围错误")
+        }
+        else {
+            check_wind=true;
+        }
+    }
+    if(check_wind && check_temp){
+        $.post("../setTemp/",
+                {"target_temp":input_temp,"target_wind":input_wind,csrfmiddlewaretoken: '{{ csrf_token }}' },
+                function (data) {
+                    if(data.result==false)
+                        alert("设置失败")
+                    document.getElementById("input_wind").value="";
+                    document.getElementById("input_temp").value="";
+            });
+    }
+}
 
 function logconfir1()
 {
@@ -267,21 +332,8 @@ function logconfir2()
          alert('风速不能为空');
       }
 }
-
-function repeat(){
-   var times = setInterval(function () {
-        var currenttemp =''
-        var On=''
-        $.get("../get_temp", {'currenttemp': currenttemp}, function (ret) {
-            $('#currenttemp').html(ret)
-        })
-        $.get("../get_On", {'On': On}, function (ret) {
-            $('#On').html(ret)
-        })
-    }, 1000);
-}
-
     function check_input_temp() {
+
         target_temp=document.getElementById("input_temp").valueOf();
         if(modle=="Cold"){
             if(target_temp<{{ min_in_cold }}||target_temp>{{ max_in_cold }}){

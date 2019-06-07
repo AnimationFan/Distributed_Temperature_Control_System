@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.shortcuts import render
-
+from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect,HttpResponse
 
@@ -8,6 +8,7 @@ from UserDefine.Controller import Controller,controller
 
 from 温控系统 import models
 from UserDefine.ConfigReader import config_info,DefaultConfig
+import json
 
 # -*- coding: UTF-8 -*-
 
@@ -66,24 +67,16 @@ def TurnOn(request):
     return HttpResponseRedirect(url)
 
     #设置温度
+
+@csrf_exempt
 def setTemp(request):
     global controller
-    t = request.POST.get('temp')
-    if t=='':
-        return HttpResponse('温度输入错误')
-    t = int(t)
-    mode = request.POST.get('mode')
-    if mode=="tohot":
-        if t>30 or t<26:
-         return HttpResponse('制热模式温度输入错误')
-    if mode=="tocold":
-        if t>26 or t<18:
-         return HttpResponse('制冷模式温度输入错误')
+    t = int(request.POST.get('target_temp'))
+    w = int(request.POST.get('target_wind'))
     precus.targettemp = t
-    w=precus.targetwind
-    controller.setAirCState(precus.room,t,w,precus.id)
-    url = '/Customer/cus/' + precus.id
-    return HttpResponseRedirect(url)
+    precus.targetwind = w
+    result=controller.setAirCState(precus.room,t,w,precus.id)
+    return HttpResponse(json.dumps({"result":result}),content_type="Application/json")
 
     #设置风速
 #@login_required
@@ -128,17 +121,15 @@ def get_temp(request):
             lastone = var
     precus.currenttemp = lastone['Temp']
     precus.currenttemp = round(precus.currenttemp, 1)
+    precus.targettemp = round(lastone["TargetTemp"],1)
+    precus.targetwind=lastone["Wind"]
     precus.On = lastone['On']
     if precus.On == True:
         precus.On = "开"
     else:
         precus.On = "关"
-
-    if request.method=='get':
-        currenttemp=request.GET('currenttemp')
-    currenttemp=precus.currenttemp
-    currenttemp=str(currenttemp)
-    return HttpResponse(currenttemp)
+    result={"current_temp":precus.currenttemp,"target_temp":precus.targettemp,"wind":precus.targetwind,"on":precus.On}
+    return HttpResponse(json.dumps(result),content_type="application/json")
 
 def get_On(request):
     global precus
