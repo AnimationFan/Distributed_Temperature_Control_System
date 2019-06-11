@@ -1,0 +1,23 @@
+<!-- 配置文件,配置文件有一部分必须要用到注释说明，所以就没有选择用json做了 -->
+<ini >
+    <TempRange modle="Hot" max="30" min="26"/>
+    <TempRange modle="Cold" max="26" min="18"/>
+
+    <DefaultTemp value="26" modle="Cold"/>
+
+    <Price value="1"/>
+
+    <!--表示一度点可以使用多长时间-->
+    <UseTime modle="HighWind" time="1"/>
+    <UseTime modle="MiddleWind" time="2"/>
+    <UseTime modle="LowWind" time="3"/>
+
+
+    <!--表示温度变化的速率-->
+    <ChangeSpeed modle="HighWind" speed="0.6"/>
+    <ChangeSpeed modle="MiddleWind" speed="0.5"/>
+    <ChangeSpeed modle="LowWind" speed="0.4"/>
+
+    <!--设定处理者数量 -->
+    <Producer num="4"/>
+</ini>

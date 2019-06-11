@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>getAccount</title>
+    {% load staticfiles %}
+    <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+
+                <hr>
+
+                <a href="../cus/{{ customer }}" target="_self" type="button" class="btn btn-success pull-right">返回</a>
+                <table class="table table-hover">
+                    <thead>
+                    <tr> 
+                        <th class="text-left" style="width:15%">顾客号</th>
+                        <th class="text-left" style="width:15%">房间号</th>
+                        <th class="text-left" style="width:10%">费用</th>
+                    </tr>
+                    </thead>
+                <tbody>
+
+                <tr>
+                    <td>{{ customer  }}</td>
+                    <td>{{ room }}</td>
+
+                    <td>{{ cost  }}</td>
+
+                </tr>
+
+                </tbody>
+
+                </table> 
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

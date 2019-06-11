@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.js"></script>
+
+    <meta charset="UTF-8">
+    <title>Customer</title>
+	{% load staticfiles %}
+    <style type="text/css">
+*{
+	margin: 0;
+	padding: 0;
+}
+#wrap {
+	min-height: 1000px;
+	width: 100%;
+	background-image: url({% static "1.jpg"%});
+	background-repeat: no-repeat;
+	background-position: center center;
+	position: relative;
+}
+#head {
+	height: 120px;
+	width: 100%;
+	background-color: #F4A460;
+	text-align: center;
+	position: relative;
+}
+#foot {
+	width: 100%;
+	height: 120px;
+	background-color: #CC9933;
+	position: relative;
+}
+#wrap .logGet {
+	min-height: 950px;
+	width: 800px;
+	position: absolute;
+	background-color: #FFFFFF;
+	top: 3%;
+	right: 4%;
+}
+.logC  button {
+	width: 100%;
+	height: 45px;
+	background-color: #ee7700;
+	border: none;
+	color: white;
+	font-size: 18px;
+}
+.logGet .logD.logDtip .p1 {
+	display: inline-block;
+	font-size: 28px;
+	margin-top: 30px;
+	width: 86%;
+}
+#wrap .logGet .logD.logDtip {
+	width: 86%;
+	border-bottom: 1px solid #ee7700;
+	margin-bottom: 60px;
+	margin-top: 0px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.logGet .lgD img {
+	position: absolute;
+	top: 12px;
+	left: 8px;
+}
+.logGet .lgD input {
+	width: 100%;
+	height: 42px;
+	text-indent: 2.5rem;
+}
+#wrap .logGet .lgD {
+	width: 86%;
+	position: relative;
+	margin-bottom: 30px;
+	margin-top: 30px;
+	margin-right: auto;
+	margin-left: auto;
+}
+#wrap .logGet .logC {
+	width: 86%;
+	margin-top: 0px;
+	margin-right: auto;
+	margin-bottom: 30px;
+	margin-left: auto;
+}
+
+
+
+.title {
+	font-family: "宋体";
+	color: #FFFFFF;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);  /* 使用css3的transform来实现 */
+	font-size: 36px;
+	height: 40px;
+	width: 30%;
+}
+
+.copyright {
+	font-family: "宋体";
+	color: #FFFFFF;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);  /* 使用css3的transform来实现 */
+	height: 60px;
+	width: 40%;
+	text-align:center;
+}
+
+
+#foot .copyright .img {
+	width: 100%;
+	height: 24px;
+	position: relative;
+}
+
+
+#foot .copyright p {
+	height: 24px;
+	width: 100%;
+}
+#rcorners1 {
+    border-radius: 25px;
+    border: 2px solid #ee7700;
+    padding: 20px;
+    width: 80%;
+    height: 42px;
+    margin-right: auto;
+	margin-bottom: 30px;
+	margin-left: auto;
+}
+
+</style>
+</head>
+
+<body >
+<div class="header" id="head">
+  <div class="title">314_G分布式温控系统</div>
+
+</div>
+
+<div class="wrap" id="wrap">
+	<div class="logGet">
+			<!-- 头部提示信息 -->
+			<div class="logD logDtip">
+				<p class="p1">亲爱的：<a>{{ID}}</a>用户，欢迎光临</p>
+			</div>
+            <div class="logD logDtip">
+                <p class="p1">
+                    当前室温： <span id='currenttemp'></span><br>
+                    当前空调状态：<span id='On'></span><br>
+                    当前预期温度：<span id="targettemp"></span><br>
+                    当前预期风速：<span id="targetwind"></span>
+                </p>
+			</div>
+            <!-- 输入框 -->
+            <div class="logC">
+                <a  href="../TurnOn" target="_self" type="button" class="logC"><button onclick="repeat()">打开空调</button></a>
+			</div>
+
+
+		    <form name="info1" action="/Customer/setTemp/" method="post">
+                {% csrf_token %}
+		        <div class="lgD">
+				    <img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
+				    <input id="input_temp" type="number" name="temp" value=""  placeholder="输入目标温度（制冷：{{ min_in_cold}}-{{ max_in_cold }}，制热：{{ min_in_hot }}-{{ max_in_hot }}）" />
+			    </div>
+            </form>
+
+            <form name="info2" action="/Customer/setWind/" method="post" >
+                    {% csrf_token %}
+		    <div class="lgD">
+				<img src="{% static "img/pay.png" %}" width="20" height="20" alt=""/>
+				<input id="input_wind" type="number" name="wind" value="" placeholder="输入预期风速（1：低速 2：中速 3：高速）" />
+			</div>
+			<div class="logC">
+			</div>
+			</form>
+            <div class="logC"><button   onclick="set_temp()">确认提交预期风速和温度</button></div>
+			<div class="logC">
+                <a href="../getAccount" target="_self" type="button" class="btn btn-success pull-right"><button>计费查询</button></a>
+			</div>
+           <div class="logC">
+               <a href="../TurnOff" target="_self" type="button" class="btn btn-success pull-right"><button>关闭空调</button></a>
+			</div>
+            <div class="logC">
+				<a href="../logout" target="_self"><button>退  出  登  陆</button></a>
+			</div>
+		</div>
+</div>
+
+<div class="footer" id="foot">
+  <div class="copyright">
+    <div class="img">
+		<span>联系邮箱：2415726612@qq.com</span>
+	</div>
+
+	<div class="img">
+		<span>联系地址：北京邮电大学</span>
+	</div>
+
+	<div class="img">
+	    <span>联系电话：15611778965</span>
+	</div>
+
+
+  </div>
+</div>
+
+<script type="text/javascript">
+    var on="{{ On }}";
+    var modle="{{ modle }}";
+    var current_temp={{ currenttemp }};
+    var default_temp=current_temp;
+    var target_temp={{ targettemp }};
+    var target_wind={{ targetwind }};
+    (function () {
+            if(on=="关"&& target_wind==0)
+                target_wind=0;
+            document.getElementById("targettemp").innerText=target_temp;
+            document.getElementById("currenttemp").innerText=current_temp;
+            document.getElementById("On").innerText=on;
+            document.getElementById("targetwind").innerText=target_wind;
+            setInterval(function () {
+                $.get("../get_temp",
+                    function (result) {
+                        current_temp=result.current_temp;
+                        on=result.on;
+                        document.getElementById("On").innerText=on;
+                        if(on=="开")
+                            document.getElementById("targettemp").innerText=target_temp;
+                        document.getElementById("currenttemp").innerText=current_temp;
+
+                        document.getElementById("targetwind").innerText=target_wind;
+                    });
+                //制冷模式下当温度低于目标温度时发出停止指令，当目标温度超过
+                if(modle=="Cold"){
+                    /*
+                    if(current_temp<target_temp){
+                        $.get("../TurnOff",function () {
+                        });
+                    }
+                    */
+                    if(current_temp>target_temp+1){
+                        $.post("../setTemp/",
+                                {"target_temp":target_temp,"target_wind":target_wind },
+                                 function (data) {
+                                    if(data.result==false)
+                                        alert("设置失败")
+                         });
+                    }
+                }
+                else {
+                    /*
+                    if(current_temp>target_temp){
+                        $.get("../TurnOff",function () {
+                    });
+                    }
+                    */
+                    if(current_temp<target_temp-1){
+                        $.post("../setTemp/",
+                                {"target_temp":target_temp,"target_wind":target_wind },
+                                 function (data) {
+                                    if(data.result==false)
+                                        alert("设置失败")
+                         });
+                    }
+                }
+            },1000)
+    })()
+
+function set_temp() {
+    var input_temp=parseFloat(document.getElementById("input_temp").value);
+    var input_wind=parseInt(document.getElementById("input_wind").value);
+    var check_temp=false;
+    var check_wind=false;
+    if(input_temp==NaN)
+        alert("温度输入类型错误");
+    else{
+        if(modle=="Cold"){
+            if (input_temp>{{ max_in_cold }}||input_temp<{{ min_in_cold }})
+                alert("请检查值范围")
+            else {
+                check_temp=true;
+            }
+        }else {
+            if (input_temp<{{ min_in_hot }}||input_temp>{{ max_in_hot }}){
+                alert("请检查值范围")
+            }else{
+                check_temp=true;
+            }
+        }
+    }
+    if(input_wind==NaN)
+        alert("风速输入错误")
+    else{
+        if(input_wind!=1 && input_wind!=2 && input_wind!=3){
+            alert("风速范围错误")
+        }
+        else {
+            check_wind=true;
+        }
+    }
+    if(check_wind && check_temp){
+        target_wind=input_wind;
+        target_temp=input_temp;
+        $.post("../setTemp/",
+                {"target_temp":input_temp,"target_wind":input_wind,csrfmiddlewaretoken: '{{ csrf_token }}' },
+                function (data) {
+                    if(data.result==false)
+                        alert("设置失败")
+                    document.getElementById("input_wind").value="";
+                    document.getElementById("input_temp").value="";
+            });
+    }
+}
+
+
+</script>
+
+</body>
+</html>
+
